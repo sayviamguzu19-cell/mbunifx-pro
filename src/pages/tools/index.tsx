@@ -2,24 +2,29 @@ import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 const sections = [
-    { id: 'dashboard', name: 'Dashboard', description: 'Your MBUNIFX trading workspace and account connection status.' },
-    { id: 'bot-builder', name: 'Bot Builder', description: 'Build and edit automated strategies using the existing Deriv Bot Builder.' },
-    { id: 'free-bots', name: 'Free Bots', description: 'Browse starter bot ideas and open them in Bot Builder.' },
-    { id: 'pro-scanner', name: 'Pro Scanner', description: 'A workspace for monitoring Volatility markets and digit-contract opportunities.' },
-    { id: 'strategy-pro', name: 'Strategy Pro', description: 'Organize, compare and refine your trading rules before use.' },
-    { id: 'speedbot', name: 'Speedbot', description: 'A fast strategy workspace. Execution stays locked until official authorization is configured.' },
-    { id: 'ai-software', name: 'AI Software', description: 'Review AI-assisted strategy ideas without presenting guesses as guaranteed signals.' },
-    { id: 'auto-trade', name: 'Auto Trade', description: 'Automated order execution is disabled until Deriv OAuth and API safeguards are verified.' },
-    { id: 'manual-trade', name: 'Manual Trade', description: 'Prepare a trade setup for your own review. No order is placed from this workspace.' },
-    { id: 'bulk-trader', name: 'Bulk Trader', description: 'Prepare multiple trade ideas. Bulk order execution is currently disabled.' },
+    { id: 'dashboard', name: 'Dashboard', description: 'Your MBUNIFX.PRO trading workspace.' },
+    { id: 'bot-builder', name: 'Bot Builder', description: 'Build and edit strategies in the existing Deriv Bot Builder.' },
+    { id: 'free-bots', name: 'Free Bots', description: 'Explore starter bot ideas before opening them in Bot Builder.' },
+    { id: 'pro-scanner', name: 'Pro Scanner', description: 'Monitor Volatility markets and digit-contract opportunities.' },
+    { id: 'strategy-pro', name: 'Strategy Pro', description: 'Organize and review your trading rules.' },
+    { id: 'speedbot', name: 'Speedbot', description: 'Prepare fast strategy workflows. Live execution remains locked.' },
+    { id: 'ai-software', name: 'AI Software', description: 'Review AI-assisted ideas without treating estimates as guarantees.' },
+    { id: 'auto-trade', name: 'Auto Trade', description: 'Automation stays disabled until official Deriv authorization is verified.' },
+    { id: 'manual-trade', name: 'Manual Trade', description: 'Prepare a trade for your own review. No order is placed here.' },
+    { id: 'bulk-trader', name: 'Bulk Trader', description: 'Prepare multiple trade ideas. Bulk execution is disabled.' },
     { id: 'charts', name: 'Charts', description: 'Open the existing Deriv chart workspace.' },
-    { id: 'copy-trader', name: 'Copy Trader', description: 'A workspace for reviewing strategies to follow. Copy execution is not enabled.' },
-    { id: 'risk-calculator', name: 'Risk Calculator', description: 'Calculate position risk and maximum loss before placing a trade.' },
-    { id: 'trade-academy', name: 'Trade Academy', description: 'Learn contract types, market basics and risk management.' },
+    { id: 'copy-trader', name: 'Copy Trader', description: 'Review strategies to follow. Copy execution is disabled.' },
+    { id: 'risk-calculator', name: 'Risk Calculator', description: 'Calculate planned risk before considering a trade.' },
+    { id: 'trade-academy', name: 'Trade Academy', description: 'Learn markets, digit contracts and risk management.' },
 ];
 
-const panelStyle = { background: 'var(--general-section-1, #fff)', border: '1px solid var(--border-normal, #e5e7eb)', borderRadius: 12, padding: 16 };
-const inputStyle = { width: '100%', maxWidth: 320, padding: '10px 12px', borderRadius: 8, border: '1px solid #9ca3af', marginTop: 6, color: 'inherit', background: 'transparent' };
+const markets = ['Volatility 10 Index', 'Volatility 25 Index', 'Volatility 50 Index', 'Volatility 75 Index', 'Volatility 100 Index'];
+const contracts = ['Over / Under', 'Matches', 'Differs', 'Even / Odd'];
+
+const shell: React.CSSProperties = { minHeight: '100%', background: '#071426', color: '#eef5ff', padding: '12px clamp(10px, 2vw, 24px) 36px' };
+const panel: React.CSSProperties = { background: 'linear-gradient(145deg,#12243b,#0d1b2e)', border: '1px solid #263d5a', borderRadius: 14, padding: 16, minWidth: 0, boxShadow: '0 8px 24px rgba(0,0,0,.18)' };
+const field: React.CSSProperties = { display: 'block', width: '100%', boxSizing: 'border-box', marginTop: 7, padding: '11px 12px', borderRadius: 9, border: '1px solid #38516f', background: '#0a192c', color: '#f2f7ff', fontSize: 14 };
+const muted: React.CSSProperties = { color: '#9fb2ca' };
 
 const ToolsPage = () => {
     const { section = 'dashboard' } = useParams();
@@ -31,84 +36,84 @@ const ToolsPage = () => {
     const [contract, setContract] = useState('Over / Under');
     const active = sections.find(item => item.id === section) ?? sections[0];
     const riskAmount = useMemo(() => {
-        const b = Number(balance);
-        const p = Number(riskPercent);
-        return Number.isFinite(b) && Number.isFinite(p) && b >= 0 && p >= 0 ? (b * p) / 100 : 0;
+        const b = Number(balance), p = Number(riskPercent);
+        return Number.isFinite(b) && Number.isFinite(p) && b >= 0 && p >= 0 ? b * p / 100 : 0;
     }, [balance, riskPercent]);
 
-    const openExisting = (hash: string) => {
-        window.location.assign('/' + hash);
-    };
+    const openExisting = (hash: string) => window.location.assign('/' + hash);
 
     return (
-        <main style={{ padding: '20px 16px 48px', maxWidth: 1180, margin: '0 auto', color: 'var(--text-general, inherit)' }}>
-            <header style={{ marginBottom: 20 }}>
-                <div style={{ fontSize: 13, opacity: 0.7 }}>MBUNIFX.PRO / WORKSPACE</div>
-                <h1 style={{ fontSize: 26, margin: '8px 0' }}>{active.name}</h1>
-                <p style={{ margin: 0, opacity: 0.8 }}>{active.description}</p>
-            </header>
+        <main style={shell}>
+            <div style={{ maxWidth: 1600, margin: '0 auto' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '7px 4px 14px' }}>
+                    <div>
+                        <div style={{ fontSize: 'clamp(21px,3vw,30px)', fontWeight: 850, letterSpacing: '.02em' }}>MBUNIFX<span style={{ color: '#159bff' }}>.PRO</span></div>
+                        <div style={{ ...muted, fontSize: 10, letterSpacing: '.2em' }}>TRADING WORKSPACE</div>
+                    </div>
+                    <div style={{ border: '1px solid #146c50', color: '#43e2a0', background: '#082b28', borderRadius: 30, padding: '7px 12px', fontSize: 12, whiteSpace: 'nowrap' }}>● SAFE PREVIEW</div>
+                </div>
 
-            <nav aria-label='MBUNIFX sections' style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(145px, 1fr))', gap: 8, marginBottom: 20 }}>
-                {sections.map(item => (
-                    <button key={item.id} onClick={() => navigate('/tools/' + item.id)} aria-current={active.id === item.id ? 'page' : undefined}
-                        style={{ textAlign: 'left', padding: '11px 12px', borderRadius: 9, border: active.id === item.id ? '2px solid #5c82f6' : '1px solid var(--border-normal, #ddd)', background: active.id === item.id ? 'rgba(92,130,246,.12)' : 'transparent', color: 'inherit', cursor: 'pointer', fontWeight: active.id === item.id ? 700 : 500 }}>
-                        {item.name}
-                    </button>
-                ))}
-            </nav>
+                <nav aria-label='MBUNIFX main navigation' style={{ position: 'sticky', top: 0, zIndex: 20, display: 'flex', flexWrap: 'nowrap', overflowX: 'auto', overflowY: 'hidden', whiteSpace: 'nowrap', gap: 5, padding: '8px 4px', margin: '0 -4px 16px', background: '#0b1a2d', borderTop: '1px solid #294361', borderBottom: '2px solid #087ce2', scrollbarWidth: 'thin' }}>
+                    {sections.map(item => (
+                        <button key={item.id} onClick={() => navigate('/tools/' + item.id)} aria-current={active.id === item.id ? 'page' : undefined}
+                            style={{ flex: '0 0 auto', border: active.id === item.id ? '1px solid #159bff' : '1px solid #263d59', borderRadius: 8, background: active.id === item.id ? '#0759b8' : '#13253c', color: '#f4f8ff', padding: '10px 12px', fontSize: 12, fontWeight: active.id === item.id ? 750 : 550, cursor: 'pointer' }}>
+                            {item.name}
+                        </button>
+                    ))}
+                </nav>
 
-            {active.id === 'risk-calculator' ? (
-                <section style={panelStyle}>
-                    <h2 style={{ marginTop: 0 }}>Trade risk calculator</h2>
-                    <p>Set your account balance and risk percentage. This is a planning calculation, not a trade order.</p>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: 16 }}>
-                        <label>Account balance (USD)<input style={inputStyle} type='number' min='0' step='0.01' value={balance} onChange={e => setBalance(e.target.value)} /></label>
-                        <label>Risk per trade (%)<input style={inputStyle} type='number' min='0' max='100' step='0.1' value={riskPercent} onChange={e => setRiskPercent(e.target.value)} /></label>
+                <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginBottom: 14 }}>
+                    <div><div style={{ ...muted, fontSize: 11 }}>MBUNIFX.PRO / WORKSPACE</div><h1 style={{ fontSize: 24, margin: '4px 0' }}>{active.name}</h1><p style={{ ...muted, margin: 0, fontSize: 13 }}>{active.description}</p></div>
+                    <div style={{ ...muted, fontSize: 11, whiteSpace: 'nowrap' }}>Deriv connection: not connected</div>
+                </div>
+
+                {active.id === 'risk-calculator' ? (
+                    <section style={{ ...panel, maxWidth: 760 }}>
+                        <h2 style={{ marginTop: 0 }}>Trade risk calculator</h2>
+                        <p style={muted}>Plan a risk amount. This calculation does not place a trade or guarantee the actual loss.</p>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(190px,1fr))', gap: 14 }}>
+                            <label>Account balance (USD)<input style={field} type='number' min='0' step='0.01' value={balance} onChange={e => setBalance(e.target.value)} /></label>
+                            <label>Risk per trade (%)<input style={field} type='number' min='0' max='100' step='0.1' value={riskPercent} onChange={e => setRiskPercent(e.target.value)} /></label>
+                        </div>
+                        <div style={{ marginTop: 18, borderRadius: 10, padding: 16, background: '#082e35', border: '1px solid #087c83' }}><div style={muted}>Planned risk amount</div><strong style={{ fontSize: 30, color: '#44e2c0' }}>USD {riskAmount.toFixed(2)}</strong></div>
+                    </section>
+                ) : active.id === 'bot-builder' ? (
+                    <section style={panel}><h2>Existing Deriv Bot Builder</h2><p style={muted}>The original Bot Builder remains in the project.</p><button onClick={() => openExisting('#bot_builder')} style={field}>Open Bot Builder</button></section>
+                ) : active.id === 'charts' ? (
+                    <section style={panel}><h2>Deriv Charts</h2><p style={muted}>Open the chart workspace already included in the project.</p><button onClick={() => openExisting('#chart')} style={field}>Open Charts</button></section>
+                ) : (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(190px, .85fr) minmax(280px, 2fr) minmax(220px, .95fr)', gap: 12, alignItems: 'start' }}>
+                        <aside style={{ display: 'grid', gap: 12 }}>
+                            <section style={panel}>
+                                <h3 style={{ margin: '0 0 12px' }}>Markets</h3>
+                                {markets.map(name => <div key={name} style={{ display: 'flex', justifyContent: 'space-between', gap: 8, padding: '11px 0', borderBottom: '1px solid #263b56', fontSize: 12 }}><span>{name}</span><span style={muted}>Waiting for feed</span></div>)}
+                            </section>
+                            <section style={{ ...panel, background: 'linear-gradient(135deg,#152b48,#10223a)' }}><div style={{ color: '#36aaff', fontWeight: 800 }}>CASHRUSH NITRO</div><p style={{ ...muted, fontSize: 12, marginBottom: 0 }}>Game section remains part of MBUNIFX.PRO and is not modified in this update.</p></section>
+                        </aside>
+
+                        <section style={{ ...panel, minHeight: 300 }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}><h2 style={{ margin: 0 }}>{active.id === 'dashboard' ? 'Trading overview' : active.name}</h2><span style={{ color: '#f7c66b', fontSize: 11 }}>LIVE FEED NOT CONNECTED</span></div>
+                            <p style={muted}>Choose a Volatility market and contract. No live prices, predictions, confidence scores or results are invented.</p>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(125px,1fr))', gap: 8, margin: '16px 0' }}>
+                                {markets.map(name => <button key={name} onClick={() => setMarket(name)} style={{ padding: 12, borderRadius: 9, border: market === name ? '1px solid #159bff' : '1px solid #304762', background: market === name ? '#10477f' : '#102139', color: '#f2f7ff', cursor: 'pointer', fontSize: 12 }}>{name.replace(' Index','')}</button>)}
+                            </div>
+                            <h3 style={{ marginBottom: 9 }}>DIGITS 0–9</h3>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,minmax(0,1fr))', gap: 7 }}>
+                                {Array.from({ length: 10 }, (_, digit) => <div key={digit} style={{ textAlign: 'center', border: '1px solid #304763', background: '#0b1b30', borderRadius: 8, padding: '12px 4px', fontSize: 23, fontWeight: 800 }}>{digit}</div>)}
+                            </div>
+                            <div style={{ marginTop: 15, padding: 12, borderRadius: 9, background: '#0b1b30', border: '1px solid #263d59' }}><strong>Digit analysis</strong><p style={{ ...muted, margin: '5px 0 0', fontSize: 12 }}>Waiting for verified Deriv tick data. Digit frequency and history will appear after the official feed is connected.</p></div>
+                        </section>
+
+                        <aside style={panel}>
+                            <h3 style={{ margin: '0 0 12px' }}>Trade panel</h3>
+                            <label style={{ fontSize: 12 }}>Market<select style={field} value={market} onChange={e => setMarket(e.target.value)}>{markets.map(m => <option key={m}>{m}</option>)}</select></label>
+                            <label style={{ display: 'block', marginTop: 12, fontSize: 12 }}>Contract type<select style={field} value={contract} onChange={e => setContract(e.target.value)}>{contracts.map(c => <option key={c}>{c}</option>)}</select></label>
+                            <label style={{ display: 'block', marginTop: 12, fontSize: 12 }}>Planned stake (USD)<input style={field} type='number' min='0' step='0.01' value={stake} onChange={e => setStake(e.target.value)} /></label>
+                            <div style={{ marginTop: 14, padding: 12, borderRadius: 9, background: '#352a13', border: '1px solid #76591d', color: '#f8d78e', fontSize: 12 }}>Safe preview only. Trade execution is disabled until official Deriv authorization and safeguards are configured.</div>
+                        </aside>
                     </div>
-                    <div style={{ marginTop: 18, padding: 16, borderRadius: 10, background: 'rgba(92,130,246,.10)' }}>
-                        <div style={{ opacity: .75 }}>Maximum planned risk</div>
-                        <strong style={{ fontSize: 30 }}>USD {riskAmount.toFixed(2)}</strong>
-                    </div>
-                    <p style={{ fontSize: 13, opacity: .75 }}>Risk amount = balance × risk percentage ÷ 100. This does not guarantee the actual loss will be limited to this amount.</p>
-                </section>
-            ) : active.id === 'bot-builder' ? (
-                <section style={panelStyle}><h2>Existing Bot Builder</h2><p>The original Deriv Bot Builder remains part of MBUNIFX.PRO.</p><button onClick={() => openExisting('#bot_builder')}>Open Bot Builder</button></section>
-            ) : active.id === 'charts' ? (
-                <section style={panelStyle}><h2>Deriv Charts</h2><p>Open the chart tab already included in the existing trading workspace.</p><button onClick={() => openExisting('#chart')}>Open Charts</button></section>
-            ) : active.id === 'dashboard' ? (
-                <section style={panelStyle}>
-                    <h2>Trading connection</h2>
-                    <p>Deriv account connection: <strong>Not connected / verify in the main app</strong></p>
-                    <p>Order placement: <strong>Disabled until official Deriv OAuth and API authorization are configured and tested.</strong></p>
-                    <button onClick={() => openExisting('#dashboard')}>Open original Dashboard</button>
-                </section>
-            ) : (
-                <section style={panelStyle}>
-                    <h2>{active.name} workspace</h2>
-                    <p>{active.description}</p>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: 12, marginTop: 16 }}>
-                        <label>Market
-                            <select style={inputStyle} value={market} onChange={e => setMarket(e.target.value)}>
-                                <option>Volatility 10 Index</option><option>Volatility 25 Index</option><option>Volatility 50 Index</option><option>Volatility 75 Index</option><option>Volatility 100 Index</option>
-                            </select>
-                        </label>
-                        <label>Contract type
-                            <select style={inputStyle} value={contract} onChange={e => setContract(e.target.value)}>
-                                <option>Over / Under</option><option>Matches</option><option>Differs</option><option>Even / Odd</option>
-                            </select>
-                        </label>
-                        <label>Planned stake (USD)
-                            <input style={inputStyle} type='number' min='0' step='0.01' value={stake} onChange={e => setStake(e.target.value)} />
-                        </label>
-                    </div>
-                    <div style={{ marginTop: 18, padding: 14, borderRadius: 9, background: 'rgba(245,158,11,.10)' }}>
-                        <strong>Safe preview mode</strong>
-                        <p style={{ marginBottom: 0 }}>Selected: {market} · {contract} · Planned stake USD {Math.max(0, Number(stake) || 0).toFixed(2)}. No live signal, balance, or trade result is fabricated. Live market scanning and order execution require verified official Deriv API integration.</p>
-                    </div>
-                    {active.id === 'trade-academy' && <p>Learning topics: Volatility indices, digit contracts, Over/Under, Matches, Differs, Even/Odd, stake sizing and risk control.</p>}
-                    {active.id === 'free-bots' && <button onClick={() => openExisting('#bot_builder')}>Open Bot Builder to create or load a bot</button>}
-                </section>
-            )}
+                )}
+            </div>
         </main>
     );
 };
