@@ -82,7 +82,7 @@ const ToolsPage = () => {
                 ) : active.id === 'charts' ? (
                     <section style={panel}><h2>Deriv Charts</h2><p style={muted}>Open the chart workspace already included in the project.</p><button onClick={() => openExisting('#chart')} style={field}>Open Charts</button></section>
                 ) : (
-                    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(190px, .85fr) minmax(280px, 2fr) minmax(220px, .95fr)', gap: 12, alignItems: 'start' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: 12, alignItems: 'start' }}>
                         <aside style={{ display: 'grid', gap: 12 }}>
                             <section style={panel}>
                                 <h3 style={{ margin: '0 0 12px' }}>Markets</h3>
