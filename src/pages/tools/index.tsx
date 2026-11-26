@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { CSSProperties, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 const sections = [
@@ -21,7 +21,7 @@ const sections = [
 const markets = ['Volatility 10 Index', 'Volatility 25 Index', 'Volatility 50 Index', 'Volatility 75 Index', 'Volatility 100 Index'];
 const contracts = ['Over / Under', 'Matches', 'Differs', 'Even / Odd'];
 
-const shell: React.CSSProperties = { minHeight: '100%', background: '#071426', color: '#eef5ff', padding: '12px clamp(10px, 2vw, 24px) 36px' };
+const shell: CSSProperties = { minHeight: '100%', background: '#071426', color: '#eef5ff', padding: '12px clamp(10px, 2vw, 24px) 36px' };
 const panel: React.CSSProperties = { background: 'linear-gradient(145deg,#12243b,#0d1b2e)', border: '1px solid #263d5a', borderRadius: 14, padding: 16, minWidth: 0, boxShadow: '0 8px 24px rgba(0,0,0,.18)' };
 const field: React.CSSProperties = { display: 'block', width: '100%', boxSizing: 'border-box', marginTop: 7, padding: '11px 12px', borderRadius: 9, border: '1px solid #38516f', background: '#0a192c', color: '#f2f7ff', fontSize: 14 };
 const muted: React.CSSProperties = { color: '#9fb2ca' };
