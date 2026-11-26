@@ -1,60 +1,39 @@
-// ========================================
-// MENU ITEMS PLACEHOLDER FOR WHITE-LABELING
-// ========================================
-//
-// This component has been simplified for white-labeling.
-// Third-party developers can add custom menu items here.
-//
-// EXAMPLE USAGE:
-// --------------
-// import { observer } from 'mobx-react-lite';
-// import { useStore } from '@/hooks/useStore';
-// import { useTranslations } from '@deriv-com/translations';
-// import { MenuItem, Text } from '@deriv-com/ui';
-//
-// export const MenuItems = observer(() => {
-//     const { localize } = useTranslations();
-//     const store = useStore();
-//     const is_logged_in = store?.client?.is_logged_in ?? false;
-//
-//     if (!is_logged_in) return null;
-//
-//     return (
-//         <>
-//             <MenuItem
-//                 as='a'
-//                 className='app-header__menu'
-//                 href='/your-page'
-//                 leftComponent={YourIcon}
-//             >
-//                 <Text>{localize('Your Menu Item')}</Text>
-//             </MenuItem>
-//         </>
-//     );
-// });
-//
-// For mobile menu items, see:
-// src/components/layout/header/mobile-menu/use-mobile-menu-config.tsx
-
 import { observer } from 'mobx-react-lite';
+import { MenuItem, Text } from '@deriv-com/ui';
 
-export const MenuItems = observer(() => {
-    // No menu items by default - add your custom menu items here
-    return null;
-});
+const items = [
+    ['Dashboard', 'dashboard'],
+    ['Bot Builder', 'bot-builder'],
+    ['Free Bots', 'free-bots'],
+    ['Pro Scanner', 'pro-scanner'],
+    ['Strategy Pro', 'strategy-pro'],
+    ['Speedbot', 'speedbot'],
+    ['AI Software', 'ai-software'],
+    ['Auto Trade', 'auto-trade'],
+    ['Manual Trade', 'manual-trade'],
+    ['Bulk Trader', 'bulk-trader'],
+    ['Charts', 'charts'],
+    ['Copy Trader', 'copy-trader'],
+    ['Risk Calculator', 'risk-calculator'],
+    ['Trade Academy', 'trade-academy'],
+];
 
-export const TradershubLink = observer(() => {
-    // No default Traders Hub link - add your custom navigation here if needed
-    return null;
-});
+export const MenuItems = observer(() => (
+    <nav aria-label='MBUNIFX tools' className='app-header__menu' style={{ display: 'flex', gap: 8, overflowX: 'auto', maxWidth: 'min(72vw, 900px)' }}>
+        <MenuItem as='a' href='/tools/dashboard' className='app-header__menu'>
+            <Text size='sm'>MBUNIFX</Text>
+        </MenuItem>
+        {items.map(([label, id]) => (
+            <MenuItem key={id} as='a' href={`/tools/${id}`} className='app-header__menu'>
+                <Text size='sm'>{label}</Text>
+            </MenuItem>
+        ))}
+    </nav>
+));
 
-// Create a namespace for MenuItems to include TradershubLink
-type MenuItemsType = typeof MenuItems & {
-    TradershubLink: typeof TradershubLink;
-};
+export const TradershubLink = observer(() => null);
 
-// Assign TradershubLink to MenuItems
+type MenuItemsType = typeof MenuItems & { TradershubLink: typeof TradershubLink };
 (MenuItems as MenuItemsType).TradershubLink = TradershubLink;
 
 export default MenuItems as MenuItemsType;
-// [/AI]
