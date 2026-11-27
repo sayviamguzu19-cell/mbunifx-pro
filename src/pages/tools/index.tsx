@@ -1,5 +1,6 @@
 import { CSSProperties, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
+import MbunifxAuth from '@/components/layout/header/mbunifx-auth';
 
 const sections = [
     { id: 'dashboard', name: 'Dashboard', description: 'Your MBUNIFX.PRO trading workspace.' },
@@ -48,6 +49,7 @@ const ToolsPage = () => {
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '7px 4px 14px' }}>
                     <div>
                         <div style={{ fontSize: 'clamp(21px,3vw,30px)', fontWeight: 850, letterSpacing: '.02em' }}>MBUNIFX<span style={{ color: '#159bff' }}>.PRO</span></div>
+                        <div style={{ marginTop: 8 }}><MbunifxAuth /></div>
                         <div style={{ ...muted, fontSize: 10, letterSpacing: '.2em' }}>TRADING WORKSPACE</div>
                     </div>
                     <div style={{ border: '1px solid #146c50', color: '#43e2a0', background: '#082b28', borderRadius: 30, padding: '7px 12px', fontSize: 12, whiteSpace: 'nowrap' }}>● SAFE PREVIEW</div>
