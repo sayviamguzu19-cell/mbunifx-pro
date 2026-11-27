@@ -142,6 +142,11 @@ const Layout = observer(() => {
         }
     }, [isAuthenticating, isInitialAuthCheckComplete]);
 
+    // Keep the Deriv Bot shell available on its dedicated preview route, but
+    // render MBUNIFX workspace routes without the legacy Bot header/body/footer.
+    const isMbunifxWorkspace = window.location.pathname === '/' || window.location.pathname.startsWith('/tools/');
+    if (isMbunifxWorkspace) return <Outlet />;
+
     return (
         <div
             className={clsx('layout', {
