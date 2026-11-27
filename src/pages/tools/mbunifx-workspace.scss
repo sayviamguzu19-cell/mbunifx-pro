@@ -1,0 +1,26 @@
+/* MBUNIFX.PRO premium trading workspace skin */
+.mb-workspace { background: #070d16 !important; color: #e8eef7 !important; }
+.mb-workspace > div { max-width: 1680px !important; }
+.mb-workspace h1, .mb-workspace h2, .mb-workspace h3 { color: #f3f7fb; letter-spacing: -.02em; }
+.mb-workspace nav { background: #0b1420 !important; border: 1px solid #1d2b3b !important; border-bottom: 2px solid #b7e34b !important; border-radius: 12px; box-shadow: 0 12px 30px rgba(0,0,0,.28); }
+.mb-workspace nav button { border-radius: 7px !important; transition: background .18s ease, border-color .18s ease; }
+.mb-workspace nav button[aria-current="page"] { background: #b7e34b !important; color: #10170a !important; border-color: #d5f47b !important; }
+.mb-workspace section, .mb-workspace aside[style*="linear-gradient"], .mb-workspace aside[style*="background"] { border-color: #263647 !important; box-shadow: 0 14px 34px rgba(0,0,0,.24) !important; }
+.mb-workspace section[style*="linear-gradient"], .mb-workspace aside[style*="linear-gradient"] { background: linear-gradient(145deg,#111d2b,#0b131e) !important; }
+.mb-workspace button { font-weight: 650; }
+.mb-workspace button:hover { border-color: #b7e34b !important; }
+.mb-workspace input, .mb-workspace select { border-color: #33485d !important; background: #09131f !important; }
+.mb-workspace label { color: #d8e2ee; }
+.mb-workspace h1 { font-size: clamp(25px,3vw,34px) !important; }
+.mb-workspace h2 { font-size: 19px; }
+.mb-workspace h3 { font-size: 14px; text-transform: uppercase; letter-spacing: .08em; }
+.mb-workspace [style*="Waiting for feed"] { color: #e0b65d !important; }
+.mb-workspace [style*="LIVE FEED NOT CONNECTED"] { border: 1px solid #745b2a; background: #302611; padding: 6px 9px; border-radius: 20px; }
+.mb-workspace [style*="DIGITS 0"] + div > div { border-radius: 10px !important; font-variant-numeric: tabular-nums; }
+.mb-workspace [style*="SAFE PREVIEW"] { border-color: #54702b !important; color: #c8ed73 !important; background: #17240e !important; font-weight: 750; letter-spacing: .04em; }
+@media (max-width: 700px) {
+  .mb-workspace { padding-top: 8px !important; }
+  .mb-workspace nav { margin-bottom: 14px !important; }
+  .mb-workspace nav button { padding: 9px 11px !important; }
+  .mb-workspace h1 { font-size: 23px !important; }
+}
