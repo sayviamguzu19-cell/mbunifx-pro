@@ -1,6 +1,7 @@
 import { CSSProperties, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import MbunifxAuth from '@/components/layout/header/mbunifx-auth';
+import './mbunifx-workspace.scss';
 
 const sections = [
     { id: 'dashboard', name: 'Dashboard', description: 'Your MBUNIFX.PRO trading workspace.' },
@@ -44,7 +45,7 @@ const ToolsPage = () => {
     const openExisting = (hash: string) => window.location.assign('/' + hash);
 
     return (
-        <main style={shell}>
+        <main className='mb-workspace' style={shell}>
             <div style={{ maxWidth: 1600, margin: '0 auto' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '7px 4px 14px' }}>
                     <div>
