@@ -24,3 +24,32 @@
   .mb-workspace nav button { padding: 9px 11px !important; }
   .mb-workspace h1 { font-size: 23px !important; }
 }
+
+.mb-workspace .mb-hero-banner {
+  width: 100%;
+  max-width: 1680px;
+  margin: 0 auto 16px;
+  overflow: hidden;
+  border: 1px solid #33432b;
+  border-radius: 14px;
+  background: #050a0d;
+  box-shadow: 0 16px 38px rgba(0, 0, 0, .32);
+}
+.mb-workspace .mb-hero-banner img {
+  display: block;
+  width: 100%;
+  max-height: 420px;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+  margin: 0 auto;
+}
+@media (max-width: 700px) {
+  .mb-workspace .mb-hero-banner {
+    margin-bottom: 12px;
+    border-radius: 10px;
+  }
+  .mb-workspace .mb-hero-banner img {
+    max-height: 300px;
+  }
+}
