@@ -47,6 +47,17 @@ const ToolsPage = () => {
     return (
         <main className='mb-workspace' style={shell}>
             <div style={{ maxWidth: 1600, margin: '0 auto' }}>
+                {active.id === 'dashboard' && (
+                    <section className='mb-hero-banner' aria-label='MBUNIFX.PRO official banner'>
+                        <img
+                            src='/assets/images/Neon%20Forex%20Trading%20Poster-vesm%281%29-1.png'
+                            alt='MBUNIFX.PRO — Forex trading and market analysis'
+                            loading='eager'
+                            fetchPriority='high'
+                        />
+                    </section>
+                )}
+
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '7px 4px 14px' }}>
                     <div>
                         <div style={{ fontSize: 'clamp(21px,3vw,30px)', fontWeight: 850, letterSpacing: '.02em' }}>MBUNIFX<span style={{ color: '#159bff' }}>.PRO</span></div>
