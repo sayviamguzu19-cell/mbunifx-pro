@@ -12,7 +12,7 @@ const json = (body: unknown, status = 200) =>
     headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" },
   });
 
-export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
+export const onRequestGet = async ({ request, env }: { request: Request; env: Env }) => {
   const authorization = request.headers.get("Authorization") || "";
   const accessToken = authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
   if (!accessToken) return json({ error: "Sign in required." }, 401);
@@ -56,7 +56,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   );
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) {
-    return json({ error: "Deriv Partners API request failed.", upstream_status: response.status, details: payload }, response.status);
+    return json({ error: "Deriv Partners API request failed.", upstream_status: response.status, details: payload }, 502);
   }
   return json({ source: "Deriv Partners API", start_date: startDate, end_date: endDate, data: payload });
 };
