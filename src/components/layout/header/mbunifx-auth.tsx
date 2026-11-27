@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import MbunifxPartners from './mbunifx-partners';
 
 type AuthSession = {
     access_token: string;
@@ -162,6 +163,7 @@ const MbunifxAuth = () => {
             {session ? (
                 <>
                     <span style={{ color: '#b8c9dd', fontSize: 11, maxWidth: 145, overflow: 'hidden', textOverflow: 'ellipsis' }}>{session.user?.email || 'MBUNIFX account'}</span>
+                    <MbunifxPartners accessToken={session.access_token} />
                     <button type='button' style={buttonStyle} onClick={signOut} disabled={busy}>Log out</button>
                 </>
             ) : (
