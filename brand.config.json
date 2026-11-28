@@ -1,21 +1,21 @@
 {
-    "brand_name": "YourBrand",
-    "brand_domain": "yourbrand.com",
+    "brand_name": "MBUNIFX.PRO",
+    "brand_domain": "mbunifx.pro",
     "brand_hostname": {
-        "staging": "staging.yourbrand.com/dashboard",
-        "production": "yourbrand.com/dashboard"
+        "staging": "staging.mbunifx.pro",
+        "production": "mbunifx.pro"
     },
-    "domain_name": "YourBrand.com",
+    "domain_name": "MBUNIFX.PRO",
     "colors": {
-        "primary": "#5c82F6",
-        "secondary": "#64748b",
-        "tertiary": "#8b5cf6",
+        "primary": "#087ce2",
+        "secondary": "#14b8a6",
+        "tertiary": "#f97316",
         "success": "#10b981",
         "danger": "#ef4444",
         "warning": "#f59e0b",
         "info": "#0ea5e9",
         "neutral": "#6b7280",
-        "black": "#0f172a",
+        "black": "#071426",
         "white": "#ffffff",
         "grey": {
             "50": "#f8fafc",
@@ -79,7 +79,7 @@
         "css_variable_prefix": "--brand"
     },
     "platform": {
-        "name": "Mbunifx.pro",
+        "name": "MBUNIFX.PRO",
         "i18n": {
             "default_language": "EN"
         },
@@ -89,10 +89,10 @@
         },
         "hostname": {
             "production": {
-                "com": "bot.yourbrand.com"
+                "com": "mbunifx.pro"
             },
             "staging": {
-                "com": "staging-bot.yourbrand.com"
+                "com": "staging.mbunifx.pro"
             }
         },
         "auth2_url": {
