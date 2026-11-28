@@ -1,5 +1,6 @@
 import { CSSProperties, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
+import { isPreviewMode, PREVIEW_BASE_PATH } from '@/utils/is-preview-mode';
 import AIEngine from './ai-engine';
 
 const sections = [
@@ -173,7 +174,7 @@ const ToolsPage = () => {
                                 <h3 style={{ margin: '0 0 12px' }}>Markets</h3>
                                 {markets.map(name => <div key={name} style={{ display: 'flex', justifyContent: 'space-between', gap: 8, padding: '11px 0', borderBottom: '1px solid #263b56', fontSize: 12 }}><span>{name}</span><span style={muted}>Waiting for feed</span></div>)}
                             </section>
-                            <section style={{ ...panel, background: 'linear-gradient(135deg,#152b48,#10223a)' }}><div style={{ color: '#36aaff', fontWeight: 800 }}>CASHRUSH NITRO</div><p style={{ ...muted, fontSize: 12, marginBottom: 0 }}>Game section remains part of MBUNIFX.PRO and is not modified in this update.</p></section>
+                            <section style={{ ...panel, background: 'linear-gradient(135deg,#152b48,#10223a)' }}><div style={{ color: '#36aaff', fontWeight: 800 }}>CASHRUSH NITRO · ARCADE RACING</div><p style={{ ...muted, fontSize: 12 }}>Launch the playable racing prototype inside MBUNIFX.PRO. The $5.00 SIM USD practice wallet is not real money; the proposed $5 deposit remains disabled.</p><button onClick={() => window.location.assign(`${isPreviewMode() ? PREVIEW_BASE_PATH : ''}/cashrush/index.html`)} style={{ ...field, marginTop: 0, border: '1px solid #087ce2', background: '#0759a8', fontWeight: 800, cursor: 'pointer' }}>PLAY CASHRUSH NITRO →</button></section>
                         </aside>
 
                         <section style={{ ...panel, minHeight: 300 }}>
