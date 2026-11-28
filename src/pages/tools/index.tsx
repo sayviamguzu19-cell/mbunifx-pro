@@ -21,6 +21,16 @@ const sections = [
 const markets = ['Volatility 10 Index', 'Volatility 25 Index', 'Volatility 50 Index', 'Volatility 75 Index', 'Volatility 100 Index'];
 const contracts = ['Over / Under', 'Matches', 'Differs', 'Even / Odd'];
 
+const freeBots = markets.flatMap((market) =>
+    contracts.map((contract) => ({
+        id: market.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + contract.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+        market,
+        contract,
+        level: contract === 'Matches' || contract === 'Differs' ? 'Intermediate' : 'Beginner',
+        description: `Starter ${contract.toLowerCase()} strategy for ${market}. Review the entry rules, use demo mode first and keep strict stake limits.`,
+    }))
+);
+
 const shell: CSSProperties = { minHeight: '100%', background: '#071426', color: '#eef5ff', padding: '12px clamp(10px, 2vw, 24px) 36px' };
 const panel: React.CSSProperties = { background: 'linear-gradient(145deg,#12243b,#0d1b2e)', border: '1px solid #263d5a', borderRadius: 14, padding: 16, minWidth: 0, boxShadow: '0 8px 24px rgba(0,0,0,.18)' };
 const field: React.CSSProperties = { display: 'block', width: '100%', boxSizing: 'border-box', marginTop: 7, padding: '11px 12px', borderRadius: 9, border: '1px solid #38516f', background: '#0a192c', color: '#f2f7ff', fontSize: 14 };
@@ -34,6 +44,12 @@ const ToolsPage = () => {
     const [stake, setStake] = useState('1');
     const [market, setMarket] = useState('Volatility 25 Index');
     const [contract, setContract] = useState('Over / Under');
+    const [botSearch, setBotSearch] = useState('');
+    const [botMarketFilter, setBotMarketFilter] = useState('All markets');
+    const visibleBots = freeBots.filter(bot =>
+        (botMarketFilter === 'All markets' || bot.market === botMarketFilter) &&
+        (bot.market + ' ' + bot.contract).toLowerCase().includes(botSearch.toLowerCase())
+    );
     const active = sections.find(item => item.id === section) ?? sections[0];
     const riskAmount = useMemo(() => {
         const b = Number(balance), p = Number(riskPercent);
@@ -67,7 +83,35 @@ const ToolsPage = () => {
                     <div style={{ ...muted, fontSize: 11, whiteSpace: 'nowrap' }}>Deriv connection: not connected</div>
                 </div>
 
-                {active.id === 'risk-calculator' ? (
+                {active.id === 'free-bots' ? (
+                    <section>
+                        <div style={{ ...panel, marginBottom: 14 }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                                <div><div style={{ color: '#43e2a0', fontSize: 11, fontWeight: 800, letterSpacing: '.14em' }}>FREE BOT LIBRARY</div><h2 style={{ margin: '6px 0' }}>20 starter bot strategies</h2><p style={{ ...muted, margin: 0, fontSize: 12 }}>Five Volatility markets × four digit contracts. Open any idea in Bot Builder to configure it.</p></div>
+                                <div style={{ color: '#43e2a0', fontWeight: 850, fontSize: 26 }}>{visibleBots.length}<span style={{ ...muted, fontSize: 11, fontWeight: 500 }}> / 20</span></div>
+                            </div>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(190px,1fr))', gap: 10, marginTop: 15 }}>
+                                <label style={{ fontSize: 12 }}>Search strategies<input style={field} value={botSearch} onChange={e => setBotSearch(e.target.value)} placeholder='e.g. Volatility 25, Matches' /></label>
+                                <label style={{ fontSize: 12 }}>Filter market<select style={field} value={botMarketFilter} onChange={e => setBotMarketFilter(e.target.value)}><option>All markets</option>{markets.map(m => <option key={m}>{m}</option>)}</select></label>
+                            </div>
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,245px),1fr))', gap: 12 }}>
+                            {visibleBots.map(bot => (
+                                <article key={bot.id} style={{ ...panel, display: 'flex', flexDirection: 'column', gap: 9 }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}><span style={{ color: '#43e2a0', fontSize: 10, fontWeight: 800, letterSpacing: '.12em' }}>FREE TEMPLATE #{String(freeBots.indexOf(bot) + 1).padStart(2, '0')}</span><span style={{ color: '#f2c56d', fontSize: 10 }}>{bot.level}</span></div>
+                                    <h3 style={{ margin: 0, fontSize: 17 }}>{bot.market.replace(' Index', '')}</h3>
+                                    <div style={{ display: 'inline-flex', alignSelf: 'flex-start', border: '1px solid #315477', borderRadius: 20, padding: '5px 9px', color: '#8bcaff', fontSize: 11 }}>{bot.contract}</div>
+                                    <p style={{ ...muted, fontSize: 12, lineHeight: 1.5, margin: '2px 0 8px', flex: 1 }}>{bot.description}</p>
+                                    <button onClick={() => navigate('/tools/bot-builder')} style={{ ...field, marginTop: 0, border: '1px solid #087ce2', background: '#0759a8', fontWeight: 800, cursor: 'pointer' }}>OPEN IN BOT BUILDER →</button>
+                                </article>
+                            ))}
+                        </div>
+                        {visibleBots.length === 0 && <div style={panel}>No strategies match that search. Try another market or contract.</div>}
+                        <div style={{ ...panel, marginTop: 14, borderColor: '#76591d', background: '#302713', color: '#f8d78e', fontSize: 12 }}>
+                            Important: These are starter strategy templates, not imported or verified profitable bots. They do not run automatically or place trades. Configure and test them in Deriv demo mode first; live trading remains disabled until official Deriv authorization and safety checks are complete.
+                        </div>
+                    </section>
+                ) : active.id === 'risk-calculator' ? (
                     <section style={{ ...panel, maxWidth: 760 }}>
                         <h2 style={{ marginTop: 0 }}>Trade risk calculator</h2>
                         <p style={muted}>Plan a risk amount. This calculation does not place a trade or guarantee the actual loss.</p>
