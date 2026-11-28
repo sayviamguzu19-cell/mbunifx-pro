@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07101c">
+<title>CASHRUSH NITRO V11 — Arcade Racing + SIM USD Practice Wallet</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 50% 0,#203654,#07101c 65%);color:#f5f8ff;font-family:system-ui,Arial,sans-serif}
+.wrap{width:min(980px,94%);margin:auto;padding:16px 0 35px}
+header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:15px}
+.logo{font-weight:1000;font-size:23px}.logo span{color:#ffd447}
+.pill{font-size:10px;font-weight:900;background:#173a45;color:#9effe5;padding:8px 11px;border-radius:99px}
+.card{background:linear-gradient(145deg,#172941,#0d192a);border:1px solid #344b68;border-radius:18px;padding:clamp(15px,4vw,26px);margin-bottom:14px}
+h1{font-size:clamp(25px,5vw,38px);margin:0;text-align:center}h2{font-size:18px;margin:0 0 10px}
+p{color:#b8c8d8;line-height:1.55}.sub{text-align:center;color:#8fffe0;font-weight:900;letter-spacing:2px;font-size:11px}
+.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:13px;margin-top:20px}
+.box{background:#091626;border:1px solid #30445d;border-radius:15px;padding:16px;min-width:0}
+.status{display:inline-block;border:1px solid #76633a;background:#352c19;color:#ffe3a0;border-radius:99px;padding:6px 9px;font-size:10px;font-weight:900}
+.status.good{border-color:#2c7965;background:#12372f;color:#a4ffe1}
+label{display:block;font-size:12px;font-weight:800;margin:12px 0 6px}
+input{width:100%;padding:13px;border-radius:12px;border:1px solid #344b68;background:#071321;color:white;font:inherit}
+button{width:100%;border:0;border-radius:12px;padding:13px;font-weight:900;background:linear-gradient(135deg,#ffdc5c,#ff9f3c);color:#241907;margin-top:9px;cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}
+.secondary{background:#20354d;color:#eaf4ff;border:1px solid #3b5572}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.small{font-size:11px;color:#aebed0;line-height:1.5}
+.note{font-size:11px;background:#211d12;border:1px solid #5c5030;color:#e8dcae;padding:11px;border-radius:11px;line-height:1.5;margin-top:13px}
+.msg{font-size:12px;line-height:1.5;min-height:20px;color:#9effe5;margin-top:10px;overflow-wrap:anywhere}
+details{background:#0a1728;border:1px solid #2d4058;border-radius:12px;padding:12px;margin-top:12px}
+summary{font-size:12px;font-weight:900;color:#ffe49a;cursor:pointer}
+#authArea,#signedArea{display:none}
+#gameArea{display:none}
+#gameArea iframe{display:block;width:100%;height:900px;min-height:760px;border:0;border-radius:14px;background:#07101c;transition:height .15s ease}
+.price{font-size:32px;color:#ffd447;font-weight:1000;margin:8px 0}
+.vipline{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:10px;background:#0a1728;border:1px solid #2d4058;border-radius:11px;margin-top:10px}
+@media(max-width:680px){.grid{grid-template-columns:1fr}header{align-items:flex-start}#gameArea iframe{height:980px}.row{flex-direction:column}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+</head>
+<body>
+<main class="wrap">
+<header><div class="logo">CASHRUSH <span>NITRO</span></div><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><a href="../" class="small" style="color:#8fffe0;text-decoration:none;font-weight:800">← MBUNIFX.PRO</a><div class="pill">PLAYER CLUB · ARCADE</div></div></header>
+<section class="card">
+<h1>WELCOME TO THE NITRO CLUB</h1>
+<div class="sub">ACCOUNT SYNC + VIP STATUS + RACING</div>
+<p style="text-align:center">Sign in to keep your player progress with the same account. Then enter the arcade highway and collect slow-moving $1 practice coins.</p>
+<div class="grid">
+<div class="box">
+<h2>👤 PLAYER ACCOUNT <span id="accountStatus" class="status">NOT CONNECTED</span></h2>
+<p class="small">Connect your own Supabase project first. Email/password is sent directly to Supabase Auth. This page does not save or log your password.</p>
+<details id="configDetails" open>
+<summary>STEP 1 · CONNECT SUPABASE PROJECT</summary>
+<label for="projectUrl">SUPABASE PROJECT URL</label>
+<input id="projectUrl" type="url" placeholder="https://your-project.supabase.co" autocomplete="url">
+<label for="publicKey">PUBLISHABLE / ANON KEY</label>
+<input id="publicKey" type="text" placeholder="Paste the public client key" autocomplete="off" autocapitalize="off" spellcheck="false">
+<button id="connectBtn">CONNECT PROJECT</button>
+<p class="small">Only the public publishable/anon key belongs here. Never paste a service_role key, database password, or secret key.</p>
+</details>
+<div id="authArea">
+<label for="email">EMAIL ADDRESS</label>
+<input id="email" type="email" placeholder="you@example.com" autocomplete="email">
+<label for="password">PASSWORD</label>
+<input id="password" type="password" placeholder="Enter your password" autocomplete="current-password">
+<div class="row">
+<button id="signupBtn">CREATE ACCOUNT</button>
+<button id="loginBtn" class="secondary">LOG IN</button>
+</div>
+<button id="googleBtn" class="secondary">CONTINUE WITH GOOGLE</button>
+<button id="resetBtn" class="secondary">EMAIL ME A PASSWORD RESET</button>
+<div id="newPasswordArea" style="display:none">
+<label for="newPassword">NEW PASSWORD</label>
+<input id="newPassword" type="password" placeholder="Choose a new password" autocomplete="new-password">
+<button id="updatePasswordBtn">SAVE NEW PASSWORD</button>
+</div>
+<p class="small">Passwords are sent directly to Supabase Auth and are never written to localStorage or the game database.</p>
+</div>
+<div id="signedArea">
+<div class="vipline"><span class="small">SIGNED IN AS</span><b id="signedEmail" style="overflow-wrap:anywhere"></b></div>
+<div class="vipline"><span class="small">CLOUD SAVE</span><b id="syncStatus">Waiting for progress</b></div>
+<button id="syncBtn" class="secondary">SYNC PROGRESS NOW</button>
+<button id="logoutBtn" class="secondary">LOG OUT</button>
+</div>
+<div id="accountMsg" class="msg" role="status" aria-live="polite"></div>
+</div>
+<div class="box">
+<h2>🔐 VIP ACCESS <span id="vipStatus" class="status">NOT VERIFIED</span></h2>
+<div class="price">$5.00 <span style="font-size:12px;color:#b8c8d8">proposed starting deposit · inactive</span></div>
+<p class="small">This is the planned first-deposit amount only. It is not the practice wallet balance. No payment provider or checkout is connected, so no deposit can be made from this prototype.</p>
+<div class="vipline"><span class="small">DEPOSIT STATUS</span><b id="depositStatus">NOT AVAILABLE</b></div>
+<div class="vipline"><span class="small">PAYMENT PROVIDER</span><b>NOT CONNECTED</b></div>
+<div class="vipline"><span class="small">VIP ACCESS</span><b id="vipValue">Separate setup · inactive</b></div>
+<button id="depositBtn" type="button" disabled>DEPOSIT $5.00 · NOT AVAILABLE</button>
+<div class="note">Do not send money yet. Deposits/withdrawals require a verified provider, server-created checkout, signed webhook verification, an idempotent server-side ledger, fraud controls, refunds/disputes handling, a funded rewards model and Kenyan legal/compliance review. No real-money wallet or payout is active.</div>
+</div>
+</div>
+<div class="note">PRACTICE WALLET NOTICE: New local profiles start with $5.00 SIM USD, and each collected coin adds $1.00 SIM USD. This simulated balance is separate from the proposed $5.00 starting deposit above. It is not cash, a deposit, earnings or withdrawable funds. Cloud sync stores game progress only; it is not a financial account.</div>
+</section>
+<section class="card center">
+<h2>🏎️ CASHRUSH NITRO ARCADE</h2>
+<p class="small">Manual steering or Auto Drive · nitro boost · traffic avoidance · three cars · coin streak combo · practice coins</p>
+<button id="play">ENTER PRACTICE GAME</button>
+</section>
+<section id="gameArea" class="card">
+<iframe id="gameFrame" title="CASHRUSH NITRO arcade racing game" srcdoc="&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no&quot;&gt;
+&lt;meta name=&quot;theme-color&quot; content=&quot;#07101c&quot;&gt;
+&lt;title&gt;CASHRUSH NITRO — Arcade Racing&lt;/title&gt;
+&lt;style&gt;
+:root{--bg:#07101c;--panel:#111e30;--line:#30445e;--gold:#ffd447;--cyan:#4ce7ff;--mint:#60f0bd}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 0,#1b3150,#07101c 65%);color:#f5f8ff;font-family:system-ui,Segoe UI,Arial,sans-serif;min-height:100vh}
+.app{width:min(100%,980px);margin:auto;padding:14px}.top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 12px}.logo{font-weight:1000;letter-spacing:1.4px;font-size:22px}.logo span{color:var(--gold)}.tag{font-size:10px;font-weight:900;letter-spacing:1px;background:#173a45;color:#9effe5;padding:7px 10px;border-radius:99px}
+.layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(240px,.8fr);gap:13px}.panel{background:linear-gradient(145deg,#14243a,#0d192a);border:1px solid var(--line);border-radius:18px;padding:13px;box-shadow:0 16px 40px #0005;min-width:0}
+.hud{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px;margin-bottom:10px}.metric{background:#091525;border:1px solid #2b3e57;border-radius:11px;padding:9px;min-width:0}.metric small{display:block;color:#9eb0c7;font-size:9px;font-weight:800;letter-spacing:.6px}.metric b{font-size:18px;white-space:nowrap}
+.track{position:relative;border-radius:14px;overflow:hidden;border:1px solid #51627b;background:#0b1726}.track canvas{display:block;width:100%;height:auto;touch-action:none}
+.overlay{position:absolute;inset:0;background:#07111ddd;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:20px;gap:10px}.overlay.hide{display:none}.overlay h1{font-size:clamp(24px,5vw,38px);margin:0}.overlay p{color:#c3d0df;max-width:350px;line-height:1.5;margin:0}
+button{font:inherit;font-weight:900;border:0;border-radius:11px;padding:12px 15px;background:linear-gradient(135deg,#ffda52,#ff9b39);color:#241907;cursor:pointer;touch-action:manipulation}
+button.secondary{background:#20354d;color:#f3f7ff;border:1px solid #3b5572}button:active{transform:scale(.97)}
+.side h2{font-size:14px;margin:2px 0 10px}.wallet{padding:13px;background:linear-gradient(120deg,#173e48,#152d42);border:1px solid #2a5960;border-radius:13px;margin-bottom:12px}.wallet small{color:#b7c8d5}.balance{font-size:29px;color:var(--mint);font-weight:1000}.demo{font-size:9px;color:#b7fff0;border:1px solid #4d7482;border-radius:99px;padding:4px 7px;font-weight:900}
+.bar{height:10px;border-radius:99px;background:#263950;overflow:hidden;margin:8px 0 12px}.fill{height:100%;width:100%;background:linear-gradient(90deg,#43e8c0,#ffd447);transition:width .12s}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}.small{font-size:11px;color:#aebed0;line-height:1.5}.garage{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:9px 0 14px}.carpick{background:#1b3048;color:#fff;border:1px solid #3b5572;padding:9px 4px;font-size:10px}.carpick.active{border-color:var(--mint);background:#12413d}.swatch{display:block;width:22px;height:11px;border-radius:5px;margin:0 auto 5px}
+.actions{display:flex;gap:7px;flex-wrap:wrap}.actions button{flex:1;font-size:11px}.controls{display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:8px;margin-top:10px}.controls button{min-height:56px;font-size:17px}.controls .nitro{background:linear-gradient(135deg,#4ce7ff,#477cff);color:#061426}.controls .nitro.on{box-shadow:0 0 22px #4ce7ff99}
+.notice{margin-top:12px;padding:10px;border:1px solid #5c5030;background:#211d12;border-radius:10px;color:#e8dcae;font-size:10px;line-height:1.5}.event{margin-top:10px;padding:10px;background:#0a1728;border:1px solid #2b4058;border-radius:10px;font-size:11px;color:#d4e3f3;min-height:38px}
+footer{text-align:center;color:#8292a9;font-size:10px;padding:14px}
+@media(max-width:740px){.layout{grid-template-columns:1fr}.app{padding:10px}.side{display:grid;grid-template-columns:1fr 1fr;gap:10px}.side .wallet,.side .car-section,.side .mission{margin:0}.side .notice{grid-column:1/-1}.hud{grid-template-columns:repeat(3,1fr)}.metric{padding:7px}.metric b{font-size:15px}}
+@media(max-width:420px){.side{grid-template-columns:1fr}.controls button{min-height:52px}.logo{font-size:19px}}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div class=&quot;app&quot;&gt;
+&lt;header class=&quot;top&quot;&gt;&lt;div class=&quot;logo&quot;&gt;CASHRUSH &lt;span&gt;NITRO&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;tag&quot;&gt;ARCADE RACING&lt;/div&gt;&lt;/header&gt;
+&lt;div class=&quot;layout&quot;&gt;
+&lt;main class=&quot;panel&quot;&gt;
+&lt;div class=&quot;hud&quot;&gt;
+&lt;div class=&quot;metric&quot;&gt;&lt;small&gt;SCORE&lt;/small&gt;&lt;b id=&quot;score&quot;&gt;0&lt;/b&gt;&lt;/div&gt;
+&lt;div class=&quot;metric&quot;&gt;&lt;small&gt;COINS&lt;/small&gt;&lt;b id=&quot;coins&quot;&gt;0&lt;/b&gt;&lt;/div&gt;
+&lt;div class=&quot;metric&quot;&gt;&lt;small&gt;SPEED&lt;/small&gt;&lt;b id=&quot;speed&quot;&gt;80 km/h&lt;/b&gt;&lt;/div&gt;&lt;div class=&quot;metric&quot;&gt;&lt;small&gt;DISTANCE ∞&lt;/small&gt;&lt;b id=&quot;distance&quot;&gt;0.00 km&lt;/b&gt;&lt;/div&gt;
+&lt;div class=&quot;metric&quot;&gt;&lt;small&gt;BEST&lt;/small&gt;&lt;b id=&quot;best&quot;&gt;0&lt;/b&gt;&lt;/div&gt;&lt;div class=&quot;metric&quot;&gt;&lt;small&gt;COIN STREAK&lt;/small&gt;&lt;b id=&quot;combo&quot;&gt;x0&lt;/b&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;track&quot;&gt;
+&lt;canvas id=&quot;game&quot; width=&quot;540&quot; height=&quot;760&quot; aria-label=&quot;CASHRUSH NITRO racing game&quot;&gt;&lt;/canvas&gt;
+&lt;div class=&quot;overlay&quot; id=&quot;overlay&quot;&gt;&lt;h1 id=&quot;overlayTitle&quot;&gt;READY TO RACE?&lt;/h1&gt;&lt;p id=&quot;overlayText&quot;&gt;Dodge traffic, collect gold coins and use nitro to speed down the highway.&lt;/p&gt;&lt;button id=&quot;startBtn&quot;&gt;START RACE&lt;/button&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;controls&quot;&gt;
+&lt;button class=&quot;secondary&quot; id=&quot;leftBtn&quot; aria-label=&quot;Steer left&quot;&gt;◀ LEFT&lt;/button&gt;
+&lt;button class=&quot;nitro&quot; id=&quot;nitroBtn&quot;&gt;⚡ NITRO&lt;/button&gt;
+&lt;button class=&quot;secondary&quot; id=&quot;rightBtn&quot; aria-label=&quot;Steer right&quot;&gt;RIGHT ▶&lt;/button&gt;
+&lt;/div&gt;
+&lt;button class=&quot;secondary&quot; id=&quot;autoBtn&quot; style=&quot;width:100%;margin-top:8px&quot;&gt;🤖 AUTO DRIVE: OFF&lt;/button&gt;
+&lt;p class=&quot;small&quot;&gt;AUTO DRIVE chooses safer lanes and follows nearby coins. It keeps running until you tap it again to stop. Tap PAUSE on mobile, or press P. Hold the controls to steer.&lt;/p&gt;
+&lt;/main&gt;
+&lt;aside class=&quot;panel side&quot;&gt;
+&lt;section class=&quot;wallet&quot;&gt;
+&lt;div class=&quot;row&quot;&gt;&lt;small&gt;SIMULATED PRACTICE WALLET&lt;/small&gt;&lt;span class=&quot;demo&quot;&gt;DEMO ONLY&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;balance&quot;&gt;&lt;span id=&quot;wallet&quot;&gt;5.00&lt;/span&gt; SIM USD&lt;/div&gt;
+&lt;small&gt;Demo only · no cash value · local to this browser until secure account sync is connected&lt;/small&gt;
+&lt;/section&gt;
+&lt;section class=&quot;car-section&quot;&gt;
+&lt;h2&gt;🏁 GARAGE · CHOOSE YOUR CAR&lt;/h2&gt;
+&lt;div class=&quot;garage&quot;&gt;
+&lt;button class=&quot;carpick active&quot; data-car=&quot;0&quot;&gt;&lt;span class=&quot;swatch&quot; style=&quot;background:#ff465b&quot;&gt;&lt;/span&gt;RAPTOR&lt;/button&gt;
+&lt;button class=&quot;carpick&quot; data-car=&quot;1&quot;&gt;&lt;span class=&quot;swatch&quot; style=&quot;background:#27d7ff&quot;&gt;&lt;/span&gt;FALCON&lt;/button&gt;
+&lt;button class=&quot;carpick&quot; data-car=&quot;2&quot;&gt;&lt;span class=&quot;swatch&quot; style=&quot;background:#b5ff35&quot;&gt;&lt;/span&gt;VIPER&lt;/button&gt;
+&lt;/div&gt;
+&lt;/section&gt;
+&lt;section class=&quot;mission&quot;&gt;
+&lt;h2&gt;⚡ RACE MISSION&lt;/h2&gt;
+&lt;div class=&quot;row small&quot;&gt;&lt;span&gt;Collect 10 coins&lt;/span&gt;&lt;b id=&quot;missionCount&quot;&gt;0 / 10&lt;/b&gt;&lt;/div&gt;
+&lt;div class=&quot;bar&quot;&gt;&lt;div class=&quot;fill&quot; id=&quot;missionFill&quot; style=&quot;width:0%&quot;&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;row small&quot;&gt;&lt;span&gt;Nitro energy&lt;/span&gt;&lt;b id=&quot;nitroLabel&quot;&gt;100%&lt;/b&gt;&lt;/div&gt;
+&lt;div class=&quot;bar&quot;&gt;&lt;div class=&quot;fill&quot; id=&quot;nitroFill&quot;&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;event&quot; id=&quot;event&quot;&gt;Collect the <iframe id="gameFrame" title="CASHRUSH NITRO arcade racing game"  practice coins on the road!&lt;/div&gt;
+&lt;div class=&quot;actions&quot; style=&quot;margin-top:10px&quot;&gt;&lt;button class=&quot;secondary&quot; id=&quot;pauseBtn&quot;&gt;Ⅱ PAUSE&lt;/button&gt;&lt;button class=&quot;secondary&quot; id=&quot;restartBtn&quot;&gt;↻ RESTART&lt;/button&gt;&lt;button class=&quot;secondary&quot; id=&quot;soundBtn&quot;&gt;🔇 SOUND OFF&lt;/button&gt;&lt;/div&gt;
+&lt;/section&gt;
+&lt;div class=&quot;notice&quot;&gt;V11: your new practice profile starts with $5.00 SIM USD. Each road coin adds <iframe id="gameFrame" title="CASHRUSH NITRO arcade racing game" .00 SIM USD to the practice-only score wallet. Coin groups appear more slowly; streak bonuses increase score only, not wallet value. The simulated wallet and best score save on this device and can sync to your own Supabase account. They are not real funds, not a deposit, and not withdrawable. No deposits or withdrawals are enabled.&lt;/div&gt;
+&lt;/aside&gt;
+&lt;/div&gt;
+&lt;footer&gt;CASHRUSH NITRO · ARCADE PRACTICE PROTOTYPE&lt;/footer&gt;
+&lt;/div&gt;
+&lt;script&gt;
+(()=&gt;{
+const canvas=document.getElementById(&#x27;game&#x27;),ctx=canvas.getContext(&#x27;2d&#x27;);
+const $=id=&gt;document.getElementById(id);
+const W=540,H=760, road={x:82,w:376}, lanes=[145,270,395];
+function readDemoNumber(key,fallback){try{const raw=localStorage.getItem(key);if(raw===null||raw.trim()===&#x27;&#x27;)return fallback;const n=Number(raw);return Number.isFinite(n)&amp;&amp;n&gt;=0?n:fallback}catch(e){return fallback}}
+let restoringCloud=false,lastParentProgressAt=0;
+function currentProgress(){return {best_score:Math.max(0,Math.floor(best||0)),total_practice_coins:Math.max(0,Math.floor(totalCollected||0)),demo_wallet:Math.max(0,Number(wallet)||0),selected_car:(cars[carIndex]||cars[0]).name}}
+function notifyParentProgress(force=false){
+ if(window.parent===window)return;
+ const now=Date.now();if(!force&amp;&amp;now-lastParentProgressAt&lt;1000)return;lastParentProgressAt=now;
+ try{const targetOrigin=location.origin===&#x27;null&#x27;?&#x27;*&#x27;:location.origin;window.parent.postMessage({type:&#x27;CRN_PROGRESS&#x27;,progress:currentProgress()},targetOrigin)}catch(e){}
+}
+function saveDemoNumber(key,value){
+ try{localStorage.setItem(key,String(value))}catch(e){/* private browsing may block local storage */}
+ if(!restoringCloud&amp;&amp;[&#x27;crn_v10_sim_wallet&#x27;,&#x27;crn_v10_total_coins&#x27;,&#x27;crn_v10_best&#x27;,&#x27;crn_v10_selected_car&#x27;].includes(key))notifyParentProgress(key===&#x27;crn_v10_sim_wallet&#x27;||key===&#x27;crn_v10_total_coins&#x27;);
+}
+let running=false,paused=false,last=0,raf=0,elapsed=0,score=0,coins=0,combo=0,comboTimer=0,distanceMeters=0,totalCollected=readDemoNumber(&#x27;crn_v10_total_coins&#x27;,0),speed=6,nitro=100,wallet=readDemoNumber(&#x27;crn_v10_sim_wallet&#x27;,5),best=readDemoNumber(&#x27;crn_v10_best&#x27;,0),sound=false;
+let player={lane:1,x:270,y:620,w:54,h:96,color:&#x27;#ff465b&#x27;};
+let traffic=[],pickups=[],particles=[],spawn=0,coinSpawn=0,keys={left:false,right:false,nitro:false},autoDrive=false,carIndex=Math.max(0,Math.min(2,Math.floor(readDemoNumber(&#x27;crn_v10_selected_car&#x27;,0)))),missionDone=false,audioCtx=null,targetLane=1;
+const cars=[{name:&#x27;RAPTOR&#x27;,color:&#x27;#ff465b&#x27;},{name:&#x27;FALCON&#x27;,color:&#x27;#27d7ff&#x27;},{name:&#x27;VIPER&#x27;,color:&#x27;#b5ff35&#x27;}];
+player.color=cars[carIndex].color;
+$(&#x27;best&#x27;).textContent=best;$(&#x27;combo&#x27;).textContent=&#x27;x&#x27;+combo;
+function rounded(x,y,w,h,r,color){ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill()}
+function beep(freq=660,duration=.08,type=&#x27;sine&#x27;){
+ if(!sound)return;
+ try{audioCtx=audioCtx||(window.AudioContext?new AudioContext():new webkitAudioContext());if(audioCtx.state===&#x27;suspended&#x27;)audioCtx.resume();const osc=audioCtx.createOscillator(),gain=audioCtx.createGain();osc.type=type;osc.frequency.value=freq;gain.gain.setValueAtTime(.045,audioCtx.currentTime);gain.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);osc.connect(gain);gain.connect(audioCtx.destination);osc.start();osc.stop(audioCtx.currentTime+duration)}catch(e){}
+}
+function drawRoad(){
+ ctx.fillStyle=&#x27;#102b22&#x27;;ctx.fillRect(0,0,W,H);
+ for(let i=0;i&lt;18;i++){let y=(i*58+(elapsed*speed*.055)%58)-58;ctx.fillStyle=i%2?&#x27;#153b2b&#x27;:&#x27;#1a482f&#x27;;ctx.fillRect(15,y,34,27);ctx.fillRect(491,y,34,27)}
+ ctx.fillStyle=&#x27;#343c49&#x27;;ctx.fillRect(road.x,0,road.w,H);
+ ctx.fillStyle=&#x27;#252d39&#x27;;ctx.fillRect(road.x+9,0,road.w-18,H);
+ ctx.fillStyle=&#x27;#f5f1cf&#x27;;ctx.fillRect(road.x+5,0,5,H);ctx.fillRect(road.x+road.w-10,0,5,H);
+ for(let l=1;l&lt;3;l++){let x=road.x+road.w*l/3;for(let y=-70+(elapsed*speed*.06)%100;y&lt;H;y+=100){ctx.fillStyle=&#x27;#d8e0e7&#x27;;ctx.fillRect(x-3,y,6,52)}}
+ // distant horizon glow
+ let g=ctx.createLinearGradient(0,0,0,170);g.addColorStop(0,&#x27;#4cffb01b&#x27;);g.addColorStop(1,&#x27;#4cffb000&#x27;);ctx.fillStyle=g;ctx.fillRect(road.x,0,road.w,170);
+}
+function drawCar(x,y,color,playerCar=false){
+ ctx.save();ctx.translate(x,y);
+ if(playerCar&amp;&amp;keys.nitro&amp;&amp;nitro&gt;0){ctx.fillStyle=&#x27;#48eaff&#x27;;ctx.shadowColor=&#x27;#48eaff&#x27;;ctx.shadowBlur=24;ctx.beginPath();ctx.moveTo(-13,42);ctx.lineTo(0,78+Math.random()*15);ctx.lineTo(13,42);ctx.fill();ctx.shadowBlur=0}
+ // shadow
+ ctx.fillStyle=&#x27;#0009&#x27;;ctx.beginPath();ctx.ellipse(0,8,33,53,0,0,Math.PI*2);ctx.fill();
+ rounded(-27,-48,54,96,13,color);
+ rounded(-20,-34,40,30,8,&#x27;#172637&#x27;);
+ rounded(-19,8,38,22,7,&#x27;#243b52&#x27;);
+ ctx.fillStyle=&#x27;#eaf5ff&#x27;;ctx.fillRect(-21,-43,10,5);ctx.fillRect(11,-43,10,5);
+ ctx.fillStyle=&#x27;#ff3f51&#x27;;ctx.fillRect(-21,37,10,5);ctx.fillRect(11,37,10,5);
+ ctx.fillStyle=&#x27;#111821&#x27;;ctx.fillRect(-31,-28,6,21);ctx.fillRect(25,-28,6,21);ctx.fillRect(-31,24,6,21);ctx.fillRect(25,24,6,21);
+ ctx.fillStyle=&#x27;#ffffff33&#x27;;ctx.fillRect(-14,-44,28,3);
+ ctx.restore();
+}
+function drawCoin(c){
+ ctx.save();ctx.translate(c.x,c.y);ctx.rotate(Math.sin(elapsed/130+c.phase)*.12);
+ ctx.shadowColor=&#x27;#ffd447&#x27;;ctx.shadowBlur=18;ctx.fillStyle=&#x27;#ffd447&#x27;;
+ ctx.beginPath();ctx.arc(0,0,25,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+ ctx.strokeStyle=&#x27;#fff0a6&#x27;;ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,20,0,Math.PI*2);ctx.stroke();
+ ctx.fillStyle=&#x27;#754500&#x27;;ctx.font=&#x27;900 12px Arial&#x27;;ctx.textAlign=&#x27;center&#x27;;ctx.textBaseline=&#x27;middle&#x27;;ctx.fillText(&#x27;<iframe id="gameFrame" title="CASHRUSH NITRO arcade racing game" &#x27;,0,1);ctx.restore()
+}
+function drawTraffic(t){drawCar(t.x,t.y,t.color,false)}
+function render(){
+ drawRoad();
+ pickups.forEach(drawCoin);traffic.forEach(drawTraffic);
+ drawCar(player.x,player.y,player.color,true);
+ // speed streaks
+ if(keys.nitro&amp;&amp;nitro&gt;0){ctx.strokeStyle=&#x27;#62eaff88&#x27;;ctx.lineWidth=3;for(let i=0;i&lt;12;i++){let x=road.x+20+Math.random()*(road.w-40),y=Math.random()*H;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,y+35+Math.random()*45);ctx.stroke()}}
+}
+function hud(){
+ $(&#x27;score&#x27;).textContent=Math.floor(score);$(&#x27;coins&#x27;).textContent=coins;$(&#x27;speed&#x27;).textContent=Math.round(speed*13.333)+&#x27; km/h&#x27;;$(&#x27;distance&#x27;).textContent=(distanceMeters/1000).toFixed(2)+&#x27; km&#x27;;$(&#x27;wallet&#x27;).textContent=Number(wallet).toFixed(2);
+ $(&#x27;missionCount&#x27;).textContent=Math.min(coins,10)+&#x27; / 10&#x27;;$(&#x27;missionFill&#x27;).style.width=Math.min(100,coins*10)+&#x27;%&#x27;;
+ $(&#x27;nitroLabel&#x27;).textContent=Math.round(nitro)+&#x27;%&#x27;;$(&#x27;nitroFill&#x27;).style.width=nitro+&#x27;%&#x27;;
+ $(&#x27;best&#x27;).textContent=best;$(&#x27;combo&#x27;).textContent=&#x27;x&#x27;+combo;
+}
+function spawnTraffic(){let lane=Math.floor(Math.random()*3),color=[&#x27;#e34c5a&#x27;,&#x27;#4b9cff&#x27;,&#x27;#ffb23f&#x27;,&#x27;#a77aff&#x27;,&#x27;#e9eef6&#x27;][Math.floor(Math.random()*5)];traffic.push({x:lanes[lane],y:-100,w:50,h:90,color,speed:.75+Math.random()*.35})}
+function spawnCoin(){
+ // Frequent groups: <iframe id="gameFrame" title="CASHRUSH NITRO arcade racing game" -marked practice coins appear across the road.
+ const pattern=Math.random();
+ if(pattern&lt;0.55){
+   const first=Math.floor(Math.random()*3);
+   for(let j=0;j&lt;3;j++)pickups.push({x:lanes[(first+j)%3],y:-25,phase:Math.random()*6});
+ }else{
+   const lane=Math.floor(Math.random()*3);
+   for(let j=0;j&lt;2;j++)pickups.push({x:lanes[lane],y:-25-j*66,phase:Math.random()*6});
+ }
+}
+function overlap(a,b){return Math.abs(a.x-b.x)&lt;42&amp;&amp;Math.abs(a.y-b.y)&lt;72}
+function endRace(){
+ running=false;cancelAnimationFrame(raf);notifyParentProgress(true); // each collected coin was already added to the simulated wallet
+ $(&#x27;overlayTitle&#x27;).textContent=&#x27;RACE OVER&#x27;;$(&#x27;overlayText&#x27;).textContent=`Score ${Math.floor(score)} · ${coins} coins collected. You collected ${coins} coins at <iframe id="gameFrame" title="CASHRUSH NITRO arcade racing game"  SIM USD each. Practice total: ${coins.toLocaleString()} — not real money.`;
+ $(&#x27;startBtn&#x27;).textContent=&#x27;RACE AGAIN&#x27;;$(&#x27;overlay&#x27;).classList.remove(&#x27;hide&#x27;);$(&#x27;event&#x27;).textContent=&#x27;Crash! Tune your steering and try again.&#x27;;beep(130,.22,&#x27;sawtooth&#x27;);hud();
+}
+function update(dt){
+ elapsed+=dt;if(comboTimer&gt;0){comboTimer-=dt;if(comboTimer&lt;=0)combo=0}let boost=keys.nitro&amp;&amp;nitro&gt;0;speed=Math.min(16,6+elapsed/17000+(boost?5:0));distanceMeters+=(Math.round(speed*13.333)/3.6)*(dt/1000);
+ if(boost){nitro=Math.max(0,nitro-dt*.035)}else{nitro=Math.min(100,nitro+dt*.012)}
+ if(autoDrive){
+   const laneScores=lanes.map((laneX,index)=&gt;{
+     let coinReward=0,trafficRisk=0;
+     for(const c of pickups){
+       const ahead=player.y-c.y;
+       if(Math.abs(c.x-laneX)&lt;38&amp;&amp;ahead&gt;-25&amp;&amp;ahead&lt;470) coinReward+=1/(1+Math.max(0,ahead)/165);
+     }
+     for(const t of traffic){
+       const ahead=player.y-t.y;
+       if(Math.abs(t.x-laneX)&lt;60&amp;&amp;ahead&gt;-55&amp;&amp;ahead&lt;270){
+         trafficRisk+=1+(270-Math.max(0,ahead))/90;
+       }
+     }
+     const laneChangeCost=Math.abs(laneX-player.x)/300;
+     return {index,laneX,trafficRisk,score:coinReward*2.7-trafficRisk*5.2-laneChangeCost*.55};
+   });
+   laneScores.sort((a,b)=&gt;b.score-a.score);
+   const current=laneScores.find(x=&gt;x.index===targetLane);
+   const safest=laneScores[0];
+   // Keep the current lane unless another lane is clearly better or the current one is unsafe.
+   if(!current||current.trafficRisk&gt;2.6||safest.score&gt;current.score+0.75) targetLane=safest.index;
+   const desired=lanes[targetLane];
+   player.x+=Math.max(-1,Math.min(1,(desired-player.x)/48))*dt*.17;
+ }
+ let dx=autoDrive?0:(keys.right?1:0)-(keys.left?1:0);player.x+=dx*dt*.18;player.x=Math.max(road.x+58,Math.min(road.x+road.w-58,player.x));
+ spawn+=dt;if(spawn&gt;Math.max(900,1300-elapsed/45)){spawn=0;spawnTraffic()}
+ coinSpawn+=dt;if(coinSpawn&gt;1500){coinSpawn=0;spawnCoin()}
+ traffic.forEach(t=&gt;t.y+=dt*.055*speed*t.speed);pickups.forEach(c=&gt;c.y+=dt*.005*speed);
+ traffic=traffic.filter(t=&gt;t.y&lt;H+100);pickups=pickups.filter(c=&gt;c.y&lt;H+40);
+ for(const t of traffic){if(overlap(player,t)){endRace();return}}
+ for(let i=pickups.length-1;i&gt;=0;i--){if(Math.abs(player.x-pickups[i].x)&lt;38&amp;&amp;Math.abs(player.y-pickups[i].y)&lt;55){pickups.splice(i,1);coins++;totalCollected++;wallet+=1;saveDemoNumber(&#x27;crn_v10_sim_wallet&#x27;,wallet);saveDemoNumber(&#x27;crn_v10_total_coins&#x27;,totalCollected);combo=Math.min(9,combo+1);comboTimer=2800;const comboBonus=50*Math.max(0,combo-1);score+=100+comboBonus;beep(820+combo*35,.07,&#x27;triangle&#x27;);$(&#x27;event&#x27;).textContent=&#x27;Practice coin collected! +<iframe id="gameFrame" title="CASHRUSH NITRO arcade racing game"  SIM USD · +&#x27;+(100+comboBonus)+&#x27; score · x&#x27;+combo+&#x27; streak&#x27;;if(coins&gt;=10&amp;&amp;!missionDone){missionDone=true;nitro=Math.min(100,nitro+25);$(&#x27;event&#x27;).textContent=&#x27;Mission complete! +25% nitro energy&#x27;}}}
+ score+=dt*.012*speed;
+ if(Math.floor(score)&gt;best){best=Math.floor(score);saveDemoNumber(&#x27;crn_v10_best&#x27;,best)}
+ hud();
+}
+function loop(now){if(!running)return;let dt=Math.min(40,now-last||16);last=now;if(!paused)update(dt);render();if(running)raf=requestAnimationFrame(loop)}
+function start(){traffic=[];pickups=[];coins=0;score=0;combo=0;comboTimer=0;distanceMeters=0;elapsed=0;spawn=0;coinSpawn=0;nitro=100;speed=6;missionDone=false;player.x=lanes[1];player.lane=1;targetLane=1;paused=false;running=true;$(&#x27;pauseBtn&#x27;).textContent=&#x27;Ⅱ PAUSE&#x27;;$(&#x27;overlay&#x27;).classList.add(&#x27;hide&#x27;);$(&#x27;event&#x27;).textContent=&#x27;Race in progress — collect coins and avoid traffic.&#x27;;hud();last=performance.now();cancelAnimationFrame(raf);raf=requestAnimationFrame(loop)}
+function pause(){if(!running)return;paused=!paused;$(&#x27;overlayTitle&#x27;).textContent=paused?&#x27;PAUSED&#x27;:&#x27;RACE RESUMED&#x27;;$(&#x27;overlayText&#x27;).textContent=paused?&#x27;Take a breath. Ready to continue?&#x27;:&#x27;Keep racing!&#x27;;$(&#x27;startBtn&#x27;).textContent=paused?&#x27;RESUME&#x27;:&#x27;CONTINUE&#x27;;$(&#x27;pauseBtn&#x27;).textContent=paused?&#x27;▶ RESUME&#x27;:&#x27;Ⅱ PAUSE&#x27;;$(&#x27;overlay&#x27;).classList.toggle(&#x27;hide&#x27;,!paused);if(!paused)last=performance.now()}
+function setKey(k,v){keys[k]=v;if(k===&#x27;nitro&#x27;)$(&#x27;nitroBtn&#x27;).classList.toggle(&#x27;on&#x27;,v)}
+function bindHold(id,key){let b=$(id);b.addEventListener(&#x27;pointerdown&#x27;,e=&gt;{e.preventDefault();b.setPointerCapture?.(e.pointerId);setKey(key,true)});[&#x27;pointerup&#x27;,&#x27;pointercancel&#x27;,&#x27;lostpointercapture&#x27;].forEach(ev=&gt;b.addEventListener(ev,()=&gt;setKey(key,false)))}
+bindHold(&#x27;leftBtn&#x27;,&#x27;left&#x27;);bindHold(&#x27;rightBtn&#x27;,&#x27;right&#x27;);bindHold(&#x27;nitroBtn&#x27;,&#x27;nitro&#x27;);
+window.addEventListener(&#x27;keydown&#x27;,e=&gt;{if([&#x27;ArrowLeft&#x27;,&#x27;ArrowRight&#x27;,&#x27; &#x27;,&#x27;ArrowUp&#x27;].includes(e.key))e.preventDefault();if(e.key===&#x27;ArrowLeft&#x27;||e.key.toLowerCase()===&#x27;a&#x27;)setKey(&#x27;left&#x27;,true);if(e.key===&#x27;ArrowRight&#x27;||e.key.toLowerCase()===&#x27;d&#x27;)setKey(&#x27;right&#x27;,true);if(e.key===&#x27; &#x27;||e.key===&#x27;ArrowUp&#x27;)setKey(&#x27;nitro&#x27;,true);if(e.key.toLowerCase()===&#x27;p&#x27;)pause()});
+window.addEventListener(&#x27;keyup&#x27;,e=&gt;{if(e.key===&#x27;ArrowLeft&#x27;||e.key.toLowerCase()===&#x27;a&#x27;)setKey(&#x27;left&#x27;,false);if(e.key===&#x27;ArrowRight&#x27;||e.key.toLowerCase()===&#x27;d&#x27;)setKey(&#x27;right&#x27;,false);if(e.key===&#x27; &#x27;||e.key===&#x27;ArrowUp&#x27;)setKey(&#x27;nitro&#x27;,false)});
+window.addEventListener(&#x27;blur&#x27;,()=&gt;{setKey(&#x27;left&#x27;,false);setKey(&#x27;right&#x27;,false);setKey(&#x27;nitro&#x27;,false)});document.addEventListener(&#x27;visibilitychange&#x27;,()=&gt;{if(document.hidden&amp;&amp;running&amp;&amp;!paused)pause()});
+$(&#x27;startBtn&#x27;).onclick=()=&gt;{if(paused){paused=false;$(&#x27;pauseBtn&#x27;).textContent=&#x27;Ⅱ PAUSE&#x27;;$(&#x27;overlay&#x27;).classList.add(&#x27;hide&#x27;);last=performance.now()}else start()};
+$(&#x27;restartBtn&#x27;).onclick=start;$(&#x27;pauseBtn&#x27;).onclick=pause;
+$(&#x27;autoBtn&#x27;).onclick=()=&gt;{autoDrive=!autoDrive;$(&#x27;autoBtn&#x27;).textContent=autoDrive?&#x27;🤖 AUTO DRIVE: ON · TAP TO STOP&#x27;:&#x27;🤖 AUTO DRIVE: OFF&#x27;;$(&#x27;autoBtn&#x27;).style.borderColor=autoDrive?&#x27;#60f0bd&#x27;:&#x27;#3b5572&#x27;;$(&#x27;event&#x27;).textContent=autoDrive?&#x27;Auto drive is steering toward coins and avoiding traffic.&#x27;:&#x27;Manual steering restored.&#x27;};
+document.querySelectorAll(&#x27;.carpick&#x27;).forEach(btn=&gt;{btn.classList.toggle(&#x27;active&#x27;,+btn.dataset.car===carIndex);btn.onclick=()=&gt;{document.querySelectorAll(&#x27;.carpick&#x27;).forEach(x=&gt;x.classList.remove(&#x27;active&#x27;));btn.classList.add(&#x27;active&#x27;);carIndex=+btn.dataset.car;player.color=cars[carIndex].color;saveDemoNumber(&#x27;crn_v10_selected_car&#x27;,carIndex);$(&#x27;event&#x27;).textContent=cars[carIndex].name+&#x27; selected. Ready to race.&#x27;;render();notifyParentProgress(true)}});
+$(&#x27;soundBtn&#x27;).textContent=&#x27;🔇 SOUND OFF&#x27;;$(&#x27;soundBtn&#x27;).onclick=()=&gt;{sound=!sound;$(&#x27;soundBtn&#x27;).textContent=sound?&#x27;🔊 SOUND ON&#x27;:&#x27;🔇 SOUND OFF&#x27;;if(sound)beep(660,.06)};
+window.addEventListener(&#x27;message&#x27;,e=&gt;{
+ if(e.source!==window.parent||e.origin!==location.origin)return;
+ const msg=e.data||{};
+ if(msg.type===&#x27;CRN_PROGRESS_REQUEST&#x27;){notifyParentProgress(true);return}
+ if(msg.type===&#x27;CRN_RESTORE_PROGRESS&#x27;&amp;&amp;msg.progress){
+   const p=msg.progress;restoringCloud=true;
+   best=Math.max(0,Math.floor(Number(p.best_score)||0));
+   totalCollected=Math.max(0,Math.floor(Number(p.total_practice_coins)||0));
+   wallet=Math.max(0,Number(p.demo_wallet)||0);
+   const idx=cars.findIndex(c=&gt;c.name===p.selected_car);if(idx&gt;=0)carIndex=idx;
+   player.color=cars[carIndex].color;
+   saveDemoNumber(&#x27;crn_v10_best&#x27;,best);saveDemoNumber(&#x27;crn_v10_total_coins&#x27;,totalCollected);
+   saveDemoNumber(&#x27;crn_v10_sim_wallet&#x27;,wallet);saveDemoNumber(&#x27;crn_v10_selected_car&#x27;,carIndex);
+   restoringCloud=false;
+   document.querySelectorAll(&#x27;.carpick&#x27;).forEach(b=&gt;b.classList.toggle(&#x27;active&#x27;,+b.dataset.car===carIndex));
+   hud();render();notifyParentProgress(true);
+ }
+});
+hud();render();
+if(window.parent!==window){try{const targetOrigin=location.origin===&#x27;null&#x27;?&#x27;*&#x27;:location.origin;window.parent.postMessage({type:&#x27;CRN_PROGRESS_REQUEST&#x27;},targetOrigin)}catch(e){}}
+function notifyParentHeight(){if(window.parent===window)return;const height=Math.max(document.documentElement.scrollHeight,document.body.scrollHeight);try{const targetOrigin=location.origin===&#x27;null&#x27;?&#x27;*&#x27;:location.origin;window.parent.postMessage({type:&#x27;CRN_HEIGHT&#x27;,height},targetOrigin)}catch(e){}}
+if(&#x27;ResizeObserver&#x27; in window){new ResizeObserver(()=&gt;requestAnimationFrame(notifyParentHeight)).observe(document.body)}
+window.addEventListener(&#x27;load&#x27;,notifyParentHeight);window.addEventListener(&#x27;resize&#x27;,notifyParentHeight);setTimeout(notifyParentHeight,250);setTimeout(notifyParentHeight,900);
+})();
+&lt;/script&gt;
+&lt;/body&gt;&lt;/html&gt;"></iframe>
+</section>
+</main>
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const frame=$('gameFrame');
+let client=null,currentUser=null,pendingRestore=null,latestProgress=null,syncTimer=null,saving=false,lastHandledUser='';
+const safeStore=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const safeRead=k=>{try{return localStorage.getItem(k)||''}catch(e){return ''}};
+function message(t){$('accountMsg').textContent=t||''}
+function setConnected(ok){
+ $('accountStatus').textContent=ok?'PROJECT CONNECTED':'NOT CONNECTED';
+ $('accountStatus').classList.toggle('good',ok);
+ $('authArea').style.display=ok?'block':'none';
+ $('configDetails').open=!ok;
+}
+function sendRestore(p){
+ pendingRestore=p;
+ try{const targetOrigin=location.origin==='null'?'*':location.origin;frame.contentWindow.postMessage({type:'CRN_RESTORE_PROGRESS',progress:p},targetOrigin)}catch(e){}
+}
+function sendProgressRequest(){
+ try{const targetOrigin=location.origin==='null'?'*':location.origin;frame.contentWindow.postMessage({type:'CRN_PROGRESS_REQUEST'},targetOrigin)}catch(e){}
+}
+async function loadVip(){
+ if(!client||!currentUser)return;
+ const {data,error}=await client.from('vip_entitlements').select('status').eq('user_id',currentUser.id).maybeSingle();
+ if(error){$('vipStatus').textContent='NOT CHECKED';$('vipValue').textContent='Database setup needed';return}
+ const status=data?.status||'inactive';
+ $('vipStatus').textContent=status.toUpperCase();
+ $('vipStatus').classList.toggle('good',status==='active');
+ $('vipValue').textContent=status==='active'?'ACTIVE':status==='revoked'?'REVOKED':'INACTIVE';
+}
+async function loadProgress(){
+ if(!client||!currentUser)return;
+ if(!latestProgress){sendProgressRequest();await new Promise(resolve=>setTimeout(resolve,350))}
+ $('syncStatus').textContent='Loading…';
+ let {data,error}=await client.from('player_progress').select('best_score,total_practice_coins,demo_wallet,selected_car').eq('user_id',currentUser.id).maybeSingle();
+ if(error){$('syncStatus').textContent='Setup needed';message('Could not load progress: '+error.message);return}
+ if(!data){
+   const created=await client.from('player_progress').insert({user_id:currentUser.id}).select('best_score,total_practice_coins,demo_wallet,selected_car').single();
+   data=created.data;error=created.error;
+ }
+ if(error||!data){$('syncStatus').textContent='Save unavailable';message('Progress table is not ready. Run the supplied SQL schema in Supabase.');return}
+ const priorUser=safeRead('crn_last_user_id');
+ const local=latestProgress;
+ // On a device's first account link, merge practice progress upward so a local demo run is not lost.
+ if(local&&(!priorUser||priorUser===currentUser.id)){
+   data={
+     ...data,
+     best_score:Math.max(Number(data.best_score)||0,Number(local.best_score)||0),
+     total_practice_coins:Math.max(Number(data.total_practice_coins)||0,Number(local.total_practice_coins)||0),
+     demo_wallet:Math.max(Number(data.demo_wallet)||0,Number(local.demo_wallet)||0)
+   };
+   const saved=await client.from('player_progress').upsert({user_id:currentUser.id,...data},{onConflict:'user_id'});
+   if(saved.error){message('Cloud merge note: '+saved.error.message)}
+ }
+ safeStore('crn_last_user_id',currentUser.id);
+ const progress={
+   best_score:Number(data.best_score)||0,
+   total_practice_coins:Number(data.total_practice_coins)||0,
+   demo_wallet:Number(data.demo_wallet)||0,
+   selected_car:data.selected_car||'RAPTOR'
+ };
+ sendRestore(progress);
+ $('syncStatus').textContent='Synced to this account';
+ message('Account recognised. Your saved practice progress is ready.');
+}
+function queueSave(){
+ if(!client||!currentUser||!latestProgress)return;
+ clearTimeout(syncTimer);
+ $('syncStatus').textContent='Changes waiting to sync…';
+ syncTimer=setTimeout(saveProgress,1400);
+}
+async function saveProgress(){
+ if(!client||!currentUser||!latestProgress||saving)return;
+ saving=true;
+ const p=latestProgress;
+ const payload={
+   user_id:currentUser.id,
+   best_score:Math.max(0,Math.floor(Number(p.best_score)||0)),
+   total_practice_coins:Math.max(0,Math.floor(Number(p.total_practice_coins)||0)),
+   demo_wallet:Math.max(0,Number(p.demo_wallet)||0),
+   selected_car:['RAPTOR','FALCON','VIPER'].includes(p.selected_car)?p.selected_car:'RAPTOR'
+ };
+ const {error}=await client.from('player_progress').upsert(payload,{onConflict:'user_id'});
+ saving=false;
+ if(error){$('syncStatus').textContent='Sync failed';message('Cloud save failed: '+error.message)}
+ else $('syncStatus').textContent='All progress saved';
+}
+async function handleSession(session){
+ const user=session?.user||null;
+ if(!user){
+   currentUser=null;lastHandledUser='';
+   $('signedArea').style.display='none';
+   $('authArea').style.display=client?'block':'none';
+   $('signedEmail').textContent='';
+   $('vipStatus').textContent='NOT VERIFIED';$('vipStatus').classList.remove('good');$('vipValue').textContent='Not checked';
+   $('accountStatus').textContent=client?'PROJECT CONNECTED':'NOT CONNECTED';
+   $('accountStatus').classList.remove('good');
+   $('newPasswordArea').style.display='none';
+   return;
+ }
+ currentUser=user;
+ $('signedArea').style.display='block';$('authArea').style.display='none';
+ $('signedEmail').textContent=user.email||'Google account';
+ $('accountStatus').textContent='ACCOUNT ACTIVE';$('accountStatus').classList.add('good');
+ if(lastHandledUser===user.id)return;
+ lastHandledUser=user.id;
+ await loadProgress();await loadVip();
+}
+async function connectProject(showMessage=true){
+ const url=$('projectUrl').value.trim().replace(/\/+$/,'');
+ const key=$('publicKey').value.trim();
+ if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(url)){message('Enter the Supabase Project URL, for example https://your-project.supabase.co');return}
+ if(key.length<20||/service_role|secret/i.test(key)){message('Use the public publishable/anon key only. Do not use a secret or service_role key.');return}
+ if(!window.supabase?.createClient){message('Supabase library is still loading. Check internet connection and try again.');return}
+ try{
+   if(client){await client.auth.signOut().catch(()=>{})}
+   client=window.supabase.createClient(url,key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+   safeStore('crn_sb_url',url);safeStore('crn_sb_public_key',key);
+   setConnected(true);
+   client.auth.onAuthStateChange((event,session)=>{
+     if(event==='PASSWORD_RECOVERY'){$('newPasswordArea').style.display='block';message('Choose a new password for this account.')}
+     Promise.resolve().then(()=>handleSession(session)).catch(err=>message('Account status error: '+err.message))
+   });
+   const {data,error}=await client.auth.getSession();
+   if(error)throw error;
+   await handleSession(data.session);
+   if(showMessage&&!data.session)message('Project connected. Create an account or log in.');
+ }catch(e){client=null;setConnected(false);message('Connection failed: '+(e.message||'Check the Project URL and public key.'))}
+}
+$('connectBtn').addEventListener('click',()=>connectProject(true));
+$('signupBtn').addEventListener('click',async()=>{
+ if(!client)return message('Connect the Supabase project first.');
+ const email=$('email').value.trim(),password=$('password').value;
+ if(!email||!password)return message('Enter your email and password.');
+ if(password.length<8)return message('Use at least 8 characters for the password.');
+ $('signupBtn').disabled=true;
+ try{
+   const {data,error}=await client.auth.signUp({email,password,options:{emailRedirectTo:location.href.split('#')[0]}});
+   if(error)throw error;
+   if(data.session)await handleSession(data.session);
+   else message('Account created. Check your email for the confirmation link, then return and log in.');
+   $('password').value='';
+ }catch(e){message('Sign-up failed: '+e.message)}
+ finally{$('signupBtn').disabled=false}
+});
+$('loginBtn').addEventListener('click',async()=>{
+ if(!client)return message('Connect the Supabase project first.');
+ const email=$('email').value.trim(),password=$('password').value;
+ if(!email||!password)return message('Enter your email and password.');
+ $('loginBtn').disabled=true;
+ try{
+   const {data,error}=await client.auth.signInWithPassword({email,password});
+   if(error)throw error;
+   $('password').value='';
+   await handleSession(data.session);
+ }catch(e){message('Login failed: '+e.message)}
+ finally{$('loginBtn').disabled=false}
+});
+$('googleBtn').addEventListener('click',async()=>{
+ if(!client)return message('Connect the Supabase project first.');
+ const secureOrigin=location.protocol==='https:'||(location.protocol==='http:'&&['localhost','127.0.0.1'].includes(location.hostname));
+ if(!secureOrigin){message('Google Sign-In needs the game hosted on HTTPS or localhost. It will not complete from a file:// preview.');return}
+ try{
+   const {error}=await client.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.href.split('#')[0]}});
+   if(error)throw error;
+ }catch(e){message('Google Sign-In failed: '+e.message)}
+});
+$('resetBtn').addEventListener('click',async()=>{
+ if(!client)return message('Connect the Supabase project first.');
+ const email=$('email').value.trim();if(!email)return message('Enter your account email first.');
+ try{
+   const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo:location.href.split('#')[0]});
+   if(error)throw error;
+   message('Password reset email sent. Open its link on this same hosted website.');
+ }catch(e){message('Reset email failed: '+e.message)}
+});
+$('updatePasswordBtn').addEventListener('click',async()=>{
+ if(!client)return;
+ const password=$('newPassword').value;
+ if(password.length<8)return message('Use at least 8 characters for the new password.');
+ try{
+   const {error}=await client.auth.updateUser({password});
+   if(error)throw error;
+   $('newPassword').value='';$('newPasswordArea').style.display='none';
+   message('Password updated. You can now log in with the new password.');
+ }catch(e){message('Password update failed: '+e.message)}
+});
+$('logoutBtn').addEventListener('click',async()=>{
+ if(!client)return;
+ const {error}=await client.auth.signOut();
+ if(error)message('Logout failed: '+error.message);
+ else message('Logged out. Practice progress remains on this device; cloud account data stays saved.');
+});
+$('syncBtn').addEventListener('click',()=>{sendProgressRequest();setTimeout(()=>{if(latestProgress)saveProgress()},250)});
+$('play').addEventListener('click',()=>{
+ $('gameArea').style.display='block';
+ $('gameArea').scrollIntoView({behavior:'smooth'});
+ sendProgressRequest();
+});
+window.addEventListener('message',event=>{
+ if(event.source!==frame.contentWindow||event.origin!==location.origin)return;
+ const msg=event.data||{};
+ if(msg.type==='CRN_HEIGHT'){const height=Math.min(2400,Math.max(760,Math.ceil(Number(msg.height)||0)));frame.style.height=height+'px';return}
+ if(msg.type==='CRN_PROGRESS'&&msg.progress){
+   latestProgress=msg.progress;
+   if(currentUser)queueSave();
+ }
+});
+frame.addEventListener('load',()=>{
+ if(pendingRestore)sendRestore(pendingRestore);
+ sendProgressRequest();
+});
+if(frame.contentDocument?.readyState==='complete')sendProgressRequest();
+const savedUrl=safeRead('crn_sb_url'),savedKey=safeRead('crn_sb_public_key');
+if(savedUrl&&savedKey){
+ $('projectUrl').value=savedUrl;$('publicKey').value=savedKey;
+ window.addEventListener('load',()=>connectProject(false),{once:true});
+}
+})();
+</script>
+</body>
+</html>
