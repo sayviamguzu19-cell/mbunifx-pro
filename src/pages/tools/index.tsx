@@ -1,5 +1,6 @@
 import { CSSProperties, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
+import AIEngine from './ai-engine';
 
 const sections = [
     { id: 'dashboard', name: 'Dashboard', description: 'Your MBUNIFX.PRO trading workspace.' },
@@ -85,7 +86,9 @@ const ToolsPage = () => {
                     <div style={{ ...muted, fontSize: 11, whiteSpace: 'nowrap' }}>Deriv connection: not connected</div>
                 </div>
 
-                {active.id === 'free-bots' ? (
+                {active.id === 'ai-software' ? (
+                    <AIEngine />
+                ) : active.id === 'free-bots' ? (
                     <section>
                         <div style={{ ...panel, marginBottom: 14 }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
