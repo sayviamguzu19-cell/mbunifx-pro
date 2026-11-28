@@ -1,5 +1,5 @@
 import { CSSProperties, useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useLocation, useNavigate, useParams } from 'react-router';
 
 const sections = [
     { id: 'dashboard', name: 'Dashboard', description: 'Your MBUNIFX.PRO trading workspace.' },
@@ -39,6 +39,8 @@ const muted: React.CSSProperties = { color: '#9fb2ca' };
 const ToolsPage = () => {
     const { section = 'dashboard' } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
+    const selectedBot = (location.state as { selectedBot?: (typeof freeBots)[number] } | null)?.selectedBot;
     const [balance, setBalance] = useState('100');
     const [riskPercent, setRiskPercent] = useState('1');
     const [stake, setStake] = useState('1');
@@ -102,7 +104,7 @@ const ToolsPage = () => {
                                     <h3 style={{ margin: 0, fontSize: 17 }}>{bot.market.replace(' Index', '')}</h3>
                                     <div style={{ display: 'inline-flex', alignSelf: 'flex-start', border: '1px solid #315477', borderRadius: 20, padding: '5px 9px', color: '#8bcaff', fontSize: 11 }}>{bot.contract}</div>
                                     <p style={{ ...muted, fontSize: 12, lineHeight: 1.5, margin: '2px 0 8px', flex: 1 }}>{bot.description}</p>
-                                    <button onClick={() => navigate('/tools/bot-builder')} style={{ ...field, marginTop: 0, border: '1px solid #087ce2', background: '#0759a8', fontWeight: 800, cursor: 'pointer' }}>OPEN IN BOT BUILDER →</button>
+                                    <button onClick={() => navigate('/tools/bot-builder', { state: { selectedBot: bot } })} style={{ ...field, marginTop: 0, border: '1px solid #087ce2', background: '#0759a8', fontWeight: 800, cursor: 'pointer' }}>LOAD THIS BOT IN BUILDER →</button>
                                 </article>
                             ))}
                         </div>
@@ -122,7 +124,22 @@ const ToolsPage = () => {
                         <div style={{ marginTop: 18, borderRadius: 10, padding: 16, background: '#082e35', border: '1px solid #087c83' }}><div style={muted}>Planned risk amount</div><strong style={{ fontSize: 30, color: '#44e2c0' }}>USD {riskAmount.toFixed(2)}</strong></div>
                     </section>
                 ) : active.id === 'bot-builder' ? (
-                    <section style={panel}><h2>Existing Deriv Bot Builder</h2><p style={muted}>The original Bot Builder remains in the project.</p><button onClick={() => openExisting('#bot_builder')} style={field}>Open Bot Builder</button></section>
+                    <section style={{ ...panel, maxWidth: 850 }}>
+                        <h2 style={{ marginTop: 0 }}>MBUNIFX Bot Builder</h2>
+                        {selectedBot ? (
+                            <div style={{ border: '1px solid #087c83', background: '#082e35', borderRadius: 11, padding: 14, marginBottom: 14 }}>
+                                <div style={{ color: '#43e2a0', fontSize: 10, fontWeight: 800, letterSpacing: '.12em' }}>LOADED FROM FREE BOTS</div>
+                                <h3 style={{ margin: '7px 0' }}>{selectedBot.market} · {selectedBot.contract}</h3>
+                                <p style={{ ...muted, fontSize: 12, margin: 0 }}>{selectedBot.description}</p>
+                            </div>
+                        ) : <p style={muted}>Choose a Free Bot template to load its market and contract settings here, or configure a strategy in the original Deriv Bot Builder.</p>}
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(190px,1fr))', gap: 12, marginBottom: 14 }}>
+                            <label style={{ fontSize: 12 }}>Selected market<select style={field} value={selectedBot?.market ?? market} onChange={e => setMarket(e.target.value)}>{markets.map(m => <option key={m}>{m}</option>)}</select></label>
+                            <label style={{ fontSize: 12 }}>Contract type<select style={field} value={selectedBot?.contract ?? contract} onChange={e => setContract(e.target.value)}>{contracts.map(x => <option key={x}>{x}</option>)}</select></label>
+                        </div>
+                        <div style={{ borderRadius: 10, padding: 12, background: '#302713', border: '1px solid #76591d', color: '#f8d78e', fontSize: 12, marginBottom: 14 }}>This loads the strategy selection only. It does not create a Deriv XML bot, connect an account, or place trades automatically. Review and test inside Deriv demo first.</div>
+                        <button onClick={() => openExisting('#bot_builder')} style={{ ...field, marginTop: 0, border: '1px solid #087ce2', background: '#0759a8', fontWeight: 800, cursor: 'pointer' }}>OPEN ORIGINAL DERIV BOT BUILDER →</button>
+                    </section>
                 ) : active.id === 'charts' ? (
                     <section style={panel}><h2>Deriv Charts</h2><p style={muted}>Open the chart workspace already included in the project.</p><button onClick={() => openExisting('#chart')} style={field}>Open Charts</button></section>
                 ) : (
