@@ -82,6 +82,27 @@ const ToolsPage = () => {
                 ) : active.id === 'charts' ? (
                     <section style={panel}><h2>Deriv Charts</h2><p style={muted}>Open the chart workspace already included in the project.</p><button onClick={() => openExisting('#chart')} style={field}>Open Charts</button></section>
                 ) : (
+                    <>
+                    {active.id === 'dashboard' && (
+                        <section style={{ marginBottom: 14 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 10 }}>
+                                <div><div style={{ ...muted, fontSize: 10, letterSpacing: '.2em' }}>QUICK ACTIONS</div><h2 style={{ margin: '4px 0 0', fontSize: 18 }}>Welcome to your workspace</h2></div>
+                                <span style={{ color: '#41dfac', fontSize: 11 }}>● SAFE PREVIEW</span>
+                            </div>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(145px,1fr))', gap: 10 }}>
+                                {[
+                                    { id: 'bot-builder', icon: '🧩', title: 'Bot Builder', note: 'Build a strategy visually', accent: '#ff7958' },
+                                    { id: 'free-bots', icon: '🤖', title: 'Free Bots', note: 'Explore starter strategies', accent: '#25d99a' },
+                                    { id: 'pro-scanner', icon: '🔎', title: 'Pro Scanner', note: 'Review digit opportunities', accent: '#45a5ff' },
+                                    { id: 'strategy-pro', icon: '⚡', title: 'Quick Strategy', note: 'Set up your trade plan', accent: '#f3c34f' },
+                                ].map(card => (
+                                    <button key={card.id} onClick={() => navigate('/tools/' + card.id)} style={{ textAlign: 'left', minHeight: 112, padding: 14, borderRadius: 13, border: '1px solid #2c4665', borderTop: '3px solid ' + card.accent, background: 'linear-gradient(145deg,#142941,#0b1a2c)', color: '#f2f7ff', cursor: 'pointer' }}>
+                                        <div style={{ fontSize: 23 }}>{card.icon}</div><div style={{ fontWeight: 800, marginTop: 8 }}>{card.title}</div><div style={{ ...muted, fontSize: 11, marginTop: 4 }}>{card.note}</div><div style={{ color: card.accent, fontSize: 11, fontWeight: 800, marginTop: 10 }}>OPEN →</div>
+                                    </button>
+                                ))}
+                            </div>
+                        </section>
+                    )}
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: 12, alignItems: 'start' }}>
                         <aside style={{ display: 'grid', gap: 12 }}>
                             <section style={panel}>
@@ -112,6 +133,7 @@ const ToolsPage = () => {
                             <div style={{ marginTop: 14, padding: 12, borderRadius: 9, background: '#352a13', border: '1px solid #76591d', color: '#f8d78e', fontSize: 12 }}>Safe preview only. Trade execution is disabled until official Deriv authorization and safeguards are configured.</div>
                         </aside>
                     </div>
+                    </>
                 )}
             </div>
         </main>
