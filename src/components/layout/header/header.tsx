@@ -14,6 +14,7 @@ import { AppLogo } from '../app-logo';
 import AccountSwitcher from './account-switcher';
 import MenuItems from './menu-items';
 import MobileMenu from './mobile-menu';
+import MbunifxAuth from './mbunifx-auth';
 import './header.scss';
 
 const AppHeader = observer(() => {
@@ -173,13 +174,19 @@ const AppHeader = observer(() => {
                 // click handlers (which would otherwise log "Failed to generate OAuth
                 // URL") never fire. The env-not-set toast explains why.
                 const isAuthConfigured = Boolean(process.env.NEXT_PUBLIC_DERIV_APP_ID);
+                const isMbunifxAuthConfigured = Boolean(
+                    process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+                );
+                if (isMbunifxAuthConfigured) {
+                    return <div className='auth-actions'><MbunifxAuth /></div>;
+                }
                 return (
                     <div className='auth-actions'>
                         <Button tertiary disabled={!isAuthConfigured} onClick={handleLogin}>
-                            <Localize i18n_default_text='Log in' />
+                            <Localize i18n_default_text='Deriv log in' />
                         </Button>
                         <Button primary_light disabled={!isAuthConfigured} onClick={handleSignup}>
-                            <Localize i18n_default_text='Sign up' />
+                            <Localize i18n_default_text='Deriv sign up' />
                         </Button>
                     </div>
                 );
