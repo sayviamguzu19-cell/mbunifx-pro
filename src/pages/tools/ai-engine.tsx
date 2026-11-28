@@ -12,15 +12,35 @@ const AIEngine = () => {
   const [question, setQuestion] = useState('');
   const [risk, setRisk] = useState('1');
   const [notice, setNotice] = useState('');
+  const [answer, setAnswer] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const requestAI = () => setNotice('AI service haijaunganishwa bado. Backend ya AI inahitaji kusanidiwa kabla ya kutoa majibu halisi. Hakuna signal au prediction iliyotengenezwa.');
+  const requestAI = async () => {
+    setLoading(true);
+    setNotice('');
+    setAnswer('');
+    try {
+      const response = await fetch('/api/ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question, market, contract }),
+      });
+      const data = await response.json() as { answer?: string; error?: string };
+      if (!response.ok) throw new Error(data.error || 'AI request imeshindikana.');
+      setAnswer(data.answer || 'AI haikurudisha jibu.');
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : 'Imeshindikana kuwasiliana na MBUNIFX AI.');
+    } finally {
+      setLoading(false);
+    }
+  };
   const requestScan = () => setNotice('Market scan inasubiri Deriv API tick feed rasmi. Hakuna market data ya kubuni itakayoonyeshwa.');
 
   return <div style={{ display: 'grid', gap: 14 }}>
     <section style={{ ...panel, background: 'radial-gradient(circle at 90% 0%,#124d73 0%,#10243d 45%,#0d1b2e 100%)' }}>
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 12, alignItems: 'center' }}>
         <div><div style={{ color: '#43e2c0', fontSize: 10, fontWeight: 850, letterSpacing: '.18em' }}>MBUNIFX INTELLIGENCE</div><h2 style={{ fontSize: 25, margin: '7px 0' }}>AI Trading Hub</h2><p style={{ ...muted, margin: 0, fontSize: 13 }}>AI assistant · digit analysis · strategy intelligence · risk controls</p></div>
-        <div style={{ border: '1px solid #76591d', color: '#f8d78e', background: '#302713', borderRadius: 30, padding: '8px 12px', fontSize: 11 }}>AI SERVICE: NOT CONNECTED</div>
+        <div style={{ border: '1px solid #76591d', color: '#f8d78e', background: '#302713', borderRadius: 30, padding: '8px 12px', fontSize: 11 }}>AI API: SERVER CONFIG REQUIRED</div>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(135px,1fr))', gap: 9, marginTop: 18 }}>
         {['AI Assistant','AI Market Scanner','Digit Intelligence','Strategy Generator'].map((x,i)=><div key={x} style={{ background: '#0a1a2caa', border: '1px solid #315477', borderRadius: 10, padding: 12 }}><div style={{ color: '#42d8c0', fontSize: 19 }}>{['✦','⌕','0–9','⚙'][i]}</div><div style={{ fontWeight: 750, fontSize: 12, marginTop: 7 }}>{x}</div><div style={{ ...muted, fontSize: 10, marginTop: 4 }}>Integration pending</div></div>)}
@@ -30,7 +50,8 @@ const AIEngine = () => {
       <section style={panel}>
         <h3 style={{ margin: '0 0 6px' }}>AI Assistant</h3><p style={{ ...muted, fontSize: 12, marginTop: 0 }}>Uliza kuhusu digit contracts, strategy rules au risk management.</p>
         <label style={{ fontSize: 12 }}>Your question<textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder='Mfano: Explain a conservative Over/Under strategy for Volatility 25...' rows={4} style={{ ...field, resize: 'vertical' }} /></label>
-        <button onClick={requestAI} disabled={!question.trim()} style={{ ...field, background: question.trim() ? '#0759a8' : '#26364a', borderColor: '#087ce2', fontWeight: 800, cursor: question.trim() ? 'pointer' : 'not-allowed' }}>ASK MBUNIFX AI →</button>
+        <button onClick={requestAI} disabled={!question.trim() || loading} style={{ ...field, background: question.trim() && !loading ? '#0759a8' : '#26364a', borderColor: '#087ce2', fontWeight: 800, cursor: question.trim() && !loading ? 'pointer' : 'not-allowed' }}>{loading ? 'THINKING…' : 'ASK MBUNIFX AI →'}</button>
+        {answer && <div role='status' style={{ marginTop: 12, whiteSpace: 'pre-wrap', lineHeight: 1.65, border: '1px solid #168b82', background: '#082e35', borderRadius: 10, padding: 13, fontSize: 13 }}><strong style={{ color: '#43e2c0' }}>MBUNIFX AI RESPONSE</strong><div style={{ marginTop: 8 }}>{answer}</div></div>}
       </section>
       <section style={panel}>
         <h3 style={{ margin: '0 0 6px' }}>AI Market Scanner</h3><p style={{ ...muted, fontSize: 12, marginTop: 0 }}>Chagua soko na contract ya kuchanganua baada ya live feed kuunganishwa.</p>
@@ -51,7 +72,7 @@ const AIEngine = () => {
     </div>
     {notice && <div role='status' style={{ ...panel, borderColor: '#76591d', background: '#302713', color: '#f8d78e', fontSize: 12 }}>{notice}</div>}
     <section style={{ ...panel, borderColor: '#76591d', background: '#302713', color: '#f8d78e', fontSize: 12, lineHeight: 1.6 }}>
-      <strong>Connection requirements</strong><p style={{ margin: '6px 0' }}>AI responses need a secure server-side AI provider connection. Live scanning needs the official Deriv API tick stream. API secrets must stay on the server, never inside browser code. Auto-trading stays disabled until account authorization, risk limits and demo tests are complete.</p>
+      <strong>Connection requirements</strong><p style={{ margin: '6px 0' }}>AI request sasa inapitia endpoint ya server /api/ai. Ili majibu yaanze, weka AI_API_KEY, AI_API_URL na AI_MODEL kama Cloudflare Pages environment variables/secrets kisha redeploy. Live scanning bado inahitaji Deriv API tick stream rasmi. API secrets lazima zibaki server-side. Auto-trading imezimwa mpaka authorization na majaribio ya demo yakamilike.</p>
     </section>
   </div>;
 };
