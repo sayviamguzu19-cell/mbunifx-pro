@@ -21,6 +21,16 @@ type TMenuConfig = {
     isActive?: boolean;
 }[];
 
+const ToolMenuIcon = () => <span aria-hidden='true' style={{ fontSize: 16 }}>▣</span>;
+
+const toolMenuItems = [
+    ['Dashboard', 'dashboard'], ['Bot Builder', 'bot-builder'], ['Free Bots', 'free-bots'],
+    ['Pro Scanner', 'pro-scanner'], ['Strategy Pro', 'strategy-pro'], ['Speedbot', 'speedbot'],
+    ['AI Software', 'ai-software'], ['Auto Trade', 'auto-trade'], ['Manual Trade', 'manual-trade'],
+    ['Bulk Trader', 'bulk-trader'], ['Charts', 'charts'], ['Copy Trader', 'copy-trader'],
+    ['Risk Calculator', 'risk-calculator'], ['Trade Academy', 'trade-academy'],
+];
+
 const useMobileMenuConfig = (
     client?: RootStore['client'],
     onLogout?: () => void,
@@ -50,6 +60,12 @@ const useMobileMenuConfig = (
                 // For desktop menu items, see:
                 // src/components/layout/header/header-config.tsx
 
+                ...toolMenuItems.map(([label, id]) => ({
+                    as: 'a' as const,
+                    label: localize(label),
+                    LeftComponent: ToolMenuIcon,
+                    href: '/tools/' + id,
+                })),
                 // Conditionally include theme toggle based on brand config
                 enableThemeToggle && {
                     as: 'button',
